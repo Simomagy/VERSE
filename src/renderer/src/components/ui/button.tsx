@@ -2,25 +2,31 @@ import * as React from 'react'
 import { cn } from '@renderer/lib/utils'
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'hud' | 'hud-ghost' | 'hud-amber' | 'hud-danger'
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'hud'
+    | 'hud-ghost'
+    | 'hud-amber'
+    | 'hud-danger'
   size?: 'default' | 'sm' | 'lg' | 'icon'
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'default', size = 'default', ...props }, ref) => {
     const variants: Record<string, string> = {
-      default:
-        'bg-primary text-primary-foreground hover:bg-primary/90',
-      destructive:
-        'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+      default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
       outline:
         'border border-hud-border bg-transparent text-hud-text hover:border-hud-border-glow hover:bg-hud-card',
       secondary:
         'bg-hud-card text-hud-text hover:bg-hud-panel hover:border-hud-border-glow border border-hud-border',
-      ghost:
-        'bg-transparent text-hud-muted hover:bg-hud-card hover:text-hud-text',
-      link:
-        'text-hud-cyan underline-offset-4 hover:underline bg-transparent',
+      ghost: 'bg-transparent text-hud-muted hover:bg-hud-card hover:text-hud-text',
+      link: 'text-hud-cyan underline-offset-4 hover:underline bg-transparent',
       hud:
         'relative bg-transparent border border-hud-cyan text-hud-cyan font-mono text-xs tracking-widest uppercase ' +
         'hover:bg-hud-cyan/10 hover:shadow-[0_0_12px_rgba(0,229,255,0.35)] ' +
@@ -35,7 +41,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       'hud-danger':
         'bg-transparent border border-hud-red text-hud-red font-mono text-xs tracking-widest uppercase ' +
         'hover:bg-hud-red/10 hover:shadow-[0_0_12px_rgba(255,60,60,0.35)] ' +
-        'active:bg-hud-red/20 transition-all duration-150',
+        'active:bg-hud-red/20 transition-all duration-150'
     }
 
     const sizes: Record<string, string> = {
@@ -49,8 +55,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         className={cn(
           'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ' +
-          'transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-hud-cyan ' +
-          'disabled:pointer-events-none disabled:opacity-40',
+            'transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-hud-cyan ' +
+            'disabled:pointer-events-none disabled:opacity-40',
           variants[variant] ?? variants.default,
           sizes[size],
           className

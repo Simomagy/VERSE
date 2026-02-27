@@ -33,7 +33,7 @@ export const ROW_VARIANTS: Variants = {
     x: 0,
     transition: {
       opacity: { duration: 0.28, times: [0, 0.1, 0.22, 0.5, 0.72, 1] },
-      x:       { duration: 0.18, ease: 'easeOut' as const }
+      x: { duration: 0.18, ease: 'easeOut' as const }
     }
   },
   exit: { opacity: 0, x: 8, transition: { duration: 0.1 } }
@@ -43,7 +43,7 @@ export const ROW_VARIANTS: Variants = {
 export const BACKDROP_VARIANTS: Variants = {
   initial: { opacity: 0 },
   animate: { opacity: 1, transition: { duration: 0.15 } },
-  exit:    { opacity: 0, transition: { duration: 0.1  } }
+  exit: { opacity: 0, transition: { duration: 0.1 } }
 }
 
 /**
@@ -58,7 +58,7 @@ export const MODAL_VARIANTS: Variants = {
     opacity: [0.6, 0.35, 0.9, 0.7, 1] as number[],
     transition: {
       clipPath: { duration: 0.22, ease: 'easeOut' as const },
-      opacity:  { duration: 0.35, times: [0, 0.12, 0.45, 0.7, 1], delay: 0.06 }
+      opacity: { duration: 0.35, times: [0, 0.12, 0.45, 0.7, 1], delay: 0.06 }
     }
   },
   exit: {

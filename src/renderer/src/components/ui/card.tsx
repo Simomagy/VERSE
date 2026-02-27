@@ -4,36 +4,21 @@ import { cn } from '@renderer/lib/utils'
 // Card base — angolo tagliato bottom-right, bordo sottile HUD
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        'hud-panel text-hud-text',
-        className
-      )}
-      {...props}
-    />
+    <div ref={ref} className={cn('hud-panel text-hud-text', className)} {...props} />
   )
 )
 Card.displayName = 'Card'
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn('flex flex-col space-y-1 p-4 pb-2', className)}
-      {...props}
-    />
+    <div ref={ref} className={cn('flex flex-col space-y-1 p-4 pb-2', className)} {...props} />
   )
 )
 CardHeader.displayName = 'CardHeader'
 
 const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3
-      ref={ref}
-      className={cn('hud-label text-hud-muted', className)}
-      {...props}
-    />
+    <h3 ref={ref} className={cn('hud-label text-hud-muted', className)} {...props} />
   )
 )
 CardTitle.displayName = 'CardTitle'

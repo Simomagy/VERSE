@@ -49,8 +49,7 @@ export class TradesService {
       {} as Record<string, number>
     )
 
-    const topCommodity =
-      Object.entries(commodityCount).sort((a, b) => b[1] - a[1])[0]?.[0] || null
+    const topCommodity = Object.entries(commodityCount).sort((a, b) => b[1] - a[1])[0]?.[0] || null
 
     return {
       totalTrades: trades.length,

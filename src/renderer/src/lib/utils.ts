@@ -9,11 +9,13 @@ export function cn(...inputs: ClassValue[]) {
  * Formatta un numero in formato valuta UEC (United Earth Credits)
  */
 export function formatUEC(value: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'decimal',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(value) + ' aUEC'
+  return (
+    new Intl.NumberFormat('en-US', {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value) + ' aUEC'
+  )
 }
 
 /**

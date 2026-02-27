@@ -1,5 +1,5 @@
 import { uexClient } from './uex.client'
-import type { DataExtractType, DataExtractResponse } from './types'
+import type { DataExtractType } from './types'
 
 export class DataService {
   /**
@@ -54,7 +54,7 @@ export class DataService {
     }> = []
 
     // Esempio formato: "Gold: Shubin SCD-1 ▶ TDD New Babbage = 4,5M UEC (avg)"
-    const lines = text.split('\n').filter(line => line.includes('▶'))
+    const lines = text.split('\n').filter((line) => line.includes('▶'))
 
     for (const line of lines) {
       const match = line.match(/^•?\s*(.+?):\s*(.+?)\s*▶\s*(.+?)\s*=\s*(.+?)$/i)
@@ -86,7 +86,7 @@ export class DataService {
     }> = []
 
     // Parse del formato testuale dei prezzi
-    const lines = text.split('\n').filter(line => line.trim())
+    const lines = text.split('\n').filter((line) => line.trim())
 
     for (const line of lines) {
       // Formato: "Commodity @ Location: Price UEC"

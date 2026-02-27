@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { refineryService } from '../api/refinery.service'
 
-const STALE_DAY = 1000 * 60 * 60 * 24  // Cache TTL doc: +1 day
+const STALE_DAY = 1000 * 60 * 60 * 24 // Cache TTL doc: +1 day
 
 export function useRefineryMethods() {
   return useQuery({

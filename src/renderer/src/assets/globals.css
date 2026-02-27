@@ -5,26 +5,26 @@
 @layer base {
   :root {
     /* shadcn/ui token mapping → HUD palette */
-    --background: 211 15% 15%;        /* hud-deep #111111 */
-    --foreground: 220 50% 88%;       /* hud-text #c8d8f0 */
-    --card: 218 43% 9%;              /* hud-panel #151515 */
+    --background: 211 15% 15%; /* hud-deep #111111 */
+    --foreground: 220 50% 88%; /* hud-text #c8d8f0 */
+    --card: 218 43% 9%; /* hud-panel #151515 */
     --card-foreground: 220 50% 88%;
     --popover: 218 43% 9%;
     --popover-foreground: 220 50% 88%;
-    --primary: 191 100% 50%;         /* hud-cyan #00e5ff */
+    --primary: 191 100% 50%; /* hud-cyan #00e5ff */
     --primary-foreground: 218 57% 5%;
-    --secondary: 218 43% 11%;        /* hud-card #0f1a26 */
+    --secondary: 218 43% 11%; /* hud-card #0f1a26 */
     --secondary-foreground: 220 50% 88%;
     --muted: 218 43% 11%;
     --muted-foreground: 213 27% 39%; /* hud-muted #4a6080 */
-    --accent: 36 85% 51%;            /* hud-amber #e8a020 */
+    --accent: 36 85% 51%; /* hud-amber #e8a020 */
     --accent-foreground: 218 57% 5%;
-    --destructive: 0 100% 61%;       /* hud-red #ff3c3c */
+    --destructive: 0 100% 61%; /* hud-red #ff3c3c */
     --destructive-foreground: 220 50% 88%;
-    --border: 215 44% 18%;           /* hud-border #1a2d42 */
+    --border: 215 44% 18%; /* hud-border #1a2d42 */
     --input: 215 44% 18%;
     --ring: 191 100% 50%;
-    --radius: 0rem;                  /* nessun arrotondamento di default */
+    --radius: 0rem; /* nessun arrotondamento di default */
   }
 }
 
@@ -33,7 +33,9 @@
     @apply border-border;
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     height: 100%;
     width: 100%;
     overflow: hidden;
@@ -42,7 +44,9 @@
   body {
     background-color: #111111;
     color: #c8d8f0;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 
   /* Selezione testo */
@@ -54,7 +58,6 @@
 
 /* ── HUD UTILITIES ─────────────────────────────────────────────────── */
 @layer utilities {
-
   /* Pannello HUD con angolo tagliato in basso a destra */
   .hud-panel {
     background-color: #151515;
@@ -74,7 +77,9 @@
   /* Bordo neon attivo */
   .hud-panel-active {
     border-color: #616161;
-    box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.1), inset 0 0 20px rgba(0, 229, 255, 0.04);
+    box-shadow:
+      0 0 0 1px rgba(0, 229, 255, 0.1),
+      inset 0 0 20px rgba(0, 229, 255, 0.04);
   }
 
   /* Corner brackets decorativi (top-left, bottom-right visibili) */
@@ -121,19 +126,27 @@
 
   /* Glow effetti */
   .hud-glow-cyan {
-    box-shadow: 0 0 8px rgba(0, 229, 255, 0.4), 0 0 20px rgba(0, 229, 255, 0.15);
+    box-shadow:
+      0 0 8px rgba(0, 229, 255, 0.4),
+      0 0 20px rgba(0, 229, 255, 0.15);
   }
 
   .hud-glow-amber {
-    box-shadow: 0 0 8px rgba(232, 160, 32, 0.4), 0 0 20px rgba(232, 160, 32, 0.15);
+    box-shadow:
+      0 0 8px rgba(232, 160, 32, 0.4),
+      0 0 20px rgba(232, 160, 32, 0.15);
   }
 
   .hud-glow-green {
-    box-shadow: 0 0 8px rgba(0, 232, 122, 0.4), 0 0 20px rgba(0, 232, 122, 0.15);
+    box-shadow:
+      0 0 8px rgba(0, 232, 122, 0.4),
+      0 0 20px rgba(0, 232, 122, 0.15);
   }
 
   .hud-glow-red {
-    box-shadow: 0 0 8px rgba(255, 60, 60, 0.4), 0 0 20px rgba(255, 60, 60, 0.15);
+    box-shadow:
+      0 0 8px rgba(255, 60, 60, 0.4),
+      0 0 20px rgba(255, 60, 60, 0.15);
   }
 
   /* Testo neon */
@@ -175,22 +188,39 @@
     animation: hud-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
 
-  .status-pulse-cyan  { background-color: #00e5ff; }
-  .status-pulse-green { background-color: #00e87a; }
-  .status-pulse-amber { background-color: #e8a020; }
-  .status-pulse-red   { background-color: #ff3c3c; }
+  .status-pulse-cyan {
+    background-color: #00e5ff;
+  }
+  .status-pulse-green {
+    background-color: #00e87a;
+  }
+  .status-pulse-amber {
+    background-color: #e8a020;
+  }
+  .status-pulse-red {
+    background-color: #ff3c3c;
+  }
 
   /* Divisore HUD orizzontale */
   .hud-divider {
     border: none;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #1a2d42 20%, #0d4f6b 50%, #1a2d42 80%, transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      #1a2d42 20%,
+      #0d4f6b 50%,
+      #1a2d42 80%,
+      transparent
+    );
   }
 
   /* Riga di dati HUD (table row) */
   .hud-row {
     border-bottom: 1px solid #1a2d42;
-    transition: background-color 0.1s, border-color 0.1s;
+    transition:
+      background-color 0.1s,
+      border-color 0.1s;
   }
 
   .hud-row:hover {
@@ -238,14 +268,27 @@
   }
 
   /* Backward compatibility alias */
-  .scrollbar-thin::-webkit-scrollbar       { width: 4px; height: 4px; }
-  .scrollbar-thin::-webkit-scrollbar-track { background: #111111; }
-  .scrollbar-thin::-webkit-scrollbar-thumb { background: #424242; }
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #c4c4c4; }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #111111;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #424242;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #c4c4c4;
+  }
 
   /* Frameless window */
-  .drag-region    { -webkit-app-region: drag; }
-  .no-drag-region { -webkit-app-region: no-drag; }
+  .drag-region {
+    -webkit-app-region: drag;
+  }
+  .no-drag-region {
+    -webkit-app-region: no-drag;
+  }
 
   /* Indicatori barra laterale per sezione */
   .hud-nav-indicator {
@@ -256,22 +299,44 @@
     width: 2px;
     height: 24px;
     background: var(--nav-accent, #00e5ff);
-    box-shadow: 0 0 8px var(--nav-accent, #00e5ff), 0 0 16px color-mix(in srgb, var(--nav-accent, #00e5ff) 40%, transparent);
+    box-shadow:
+      0 0 8px var(--nav-accent, #00e5ff),
+      0 0 16px color-mix(in srgb, var(--nav-accent, #00e5ff) 40%, transparent);
   }
 
   /* Bordi panel colorati per sezione */
-  .hud-panel-market  { border-color: rgba(0, 229, 255, 0.3); }
-  .hud-panel-fleet   { border-color: rgba(64, 128, 255, 0.3); }
-  .hud-panel-trades  { border-color: rgba(232, 160, 32, 0.3); }
-  .hud-panel-stats   { border-color: rgba(0, 232, 122, 0.3); }
-  .hud-panel-config  { border-color: rgba(160, 96, 255, 0.3); }
+  .hud-panel-market {
+    border-color: rgba(0, 229, 255, 0.3);
+  }
+  .hud-panel-fleet {
+    border-color: rgba(64, 128, 255, 0.3);
+  }
+  .hud-panel-trades {
+    border-color: rgba(232, 160, 32, 0.3);
+  }
+  .hud-panel-stats {
+    border-color: rgba(0, 232, 122, 0.3);
+  }
+  .hud-panel-config {
+    border-color: rgba(160, 96, 255, 0.3);
+  }
 
   /* Gradient section header */
-  .hud-section-fleet    { background: linear-gradient(90deg, rgba(64,128,255,0.08) 0%, transparent 60%); }
-  .hud-section-trades   { background: linear-gradient(90deg, rgba(232,160,32,0.08) 0%, transparent 60%); }
-  .hud-section-refinery { background: linear-gradient(90deg, rgba(160,96,255,0.08) 0%, transparent 60%); }
-  .hud-section-wallet   { background: linear-gradient(90deg, rgba(0,232,122,0.08) 0%, transparent 60%); }
-  .hud-section-config   { background: linear-gradient(90deg, rgba(128,128,128,0.08) 0%, transparent 60%); }
+  .hud-section-fleet {
+    background: linear-gradient(90deg, rgba(64, 128, 255, 0.08) 0%, transparent 60%);
+  }
+  .hud-section-trades {
+    background: linear-gradient(90deg, rgba(232, 160, 32, 0.08) 0%, transparent 60%);
+  }
+  .hud-section-refinery {
+    background: linear-gradient(90deg, rgba(160, 96, 255, 0.08) 0%, transparent 60%);
+  }
+  .hud-section-wallet {
+    background: linear-gradient(90deg, rgba(0, 232, 122, 0.08) 0%, transparent 60%);
+  }
+  .hud-section-config {
+    background: linear-gradient(90deg, rgba(128, 128, 128, 0.08) 0%, transparent 60%);
+  }
 
   /* Input numero senza frecce */
   input[type='number']::-webkit-inner-spin-button,

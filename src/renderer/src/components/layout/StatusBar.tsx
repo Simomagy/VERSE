@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Download } from 'lucide-react'
 
-const API_CHECK_INTERVAL_MS = 60_000  // ri-ping ogni 60 s
+const API_CHECK_INTERVAL_MS = 60_000 // ri-ping ogni 60 s
 
 type ApiStatus = 'checking' | 'online' | 'offline'
 
@@ -15,15 +15,18 @@ function useClock() {
 }
 
 function useAppInfo() {
-  const [version, setVersion]   = useState<string>('…')
+  const [version, setVersion] = useState<string>('…')
   const [apiStatus, setApiStatus] = useState<{ uex: ApiStatus; wiki: ApiStatus }>({
-    uex:  'checking',
+    uex: 'checking',
     wiki: 'checking'
   })
 
   useEffect(() => {
     if (typeof window.api?.app?.version === 'function') {
-      window.api.app.version().then(setVersion).catch(() => setVersion('?'))
+      window.api.app
+        .version()
+        .then(setVersion)
+        .catch(() => setVersion('?'))
     }
   }, [])
 
@@ -31,10 +34,11 @@ function useAppInfo() {
     const check = () => {
       if (typeof window.api?.app?.checkApis !== 'function') return
       setApiStatus({ uex: 'checking', wiki: 'checking' })
-      window.api.app.checkApis()
+      window.api.app
+        .checkApis()
         .then(({ uex, wiki }) =>
           setApiStatus({
-            uex:  uex  ? 'online' : 'offline',
+            uex: uex ? 'online' : 'offline',
             wiki: wiki ? 'online' : 'offline'
           })
         )
@@ -68,9 +72,19 @@ function useUpdater() {
 
 function ApiDot({ label, status }: { label: string; status: ApiStatus }) {
   const cfg: Record<ApiStatus, { color: string; glow: string; text: string; pulse: boolean }> = {
-    checking: { color: 'bg-hud-amber',  glow: '0 0 4px #e8a020', text: 'text-hud-amber',  pulse: true  },
-    online:   { color: 'bg-hud-green',  glow: '0 0 4px #00e87a', text: 'text-hud-green',  pulse: false },
-    offline:  { color: 'bg-hud-red',    glow: '0 0 4px #ff4040', text: 'text-hud-red',    pulse: false }
+    checking: {
+      color: 'bg-hud-amber',
+      glow: '0 0 4px #e8a020',
+      text: 'text-hud-amber',
+      pulse: true
+    },
+    online: {
+      color: 'bg-hud-green',
+      glow: '0 0 4px #00e87a',
+      text: 'text-hud-green',
+      pulse: false
+    },
+    offline: { color: 'bg-hud-red', glow: '0 0 4px #ff4040', text: 'text-hud-red', pulse: false }
   }
   const c = cfg[status]
   return (
@@ -106,8 +120,8 @@ export function StatusBar() {
 
       {/* Centro: indicatori API + badge aggiornamento */}
       <div className="flex items-center gap-4">
-        <ApiDot label="UEX API"  status={apiStatus.uex}  />
-        <ApiDot label="SC WIKI"  status={apiStatus.wiki} />
+        <ApiDot label="UEX API" status={apiStatus.uex} />
+        <ApiDot label="SC WIKI" status={apiStatus.wiki} />
 
         {updateReady && (
           <button
@@ -117,8 +131,7 @@ export function StatusBar() {
               bg-hud-green/10 text-hud-green hud-label animate-pulse
               hover:bg-hud-green/20 hover:border-hud-green transition-colors"
           >
-            <Download className="h-2.5 w-2.5" />
-            v{updateReady.version} READY
+            <Download className="h-2.5 w-2.5" />v{updateReady.version} READY
           </button>
         )}
       </div>

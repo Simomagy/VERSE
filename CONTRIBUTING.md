@@ -57,6 +57,7 @@ Follow Conventional Commits:
 - `chore:` maintenance tasks
 
 Examples:
+
 ```
 feat: add trade route calculator
 fix: resolve rate limiting issue

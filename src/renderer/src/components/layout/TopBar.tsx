@@ -9,11 +9,11 @@ interface ViewMeta {
 }
 
 const VIEW_META: Record<string, ViewMeta> = {
-  '/fleet':    { label: 'FLEET REGISTRY',  accent: '#4080ff', accentDim: 'rgba(64,128,255,0.12)'  },
-  '/trades':   { label: 'TRADE LOG',       accent: '#e8a020', accentDim: 'rgba(232,160,32,0.12)'  },
-  '/refinery': { label: 'REFINERY LOG',    accent: '#a060ff', accentDim: 'rgba(160,96,255,0.12)'  },
-  '/wallet':   { label: 'WALLET',          accent: '#00e87a', accentDim: 'rgba(0,232,122,0.12)'  },
-  '/settings': { label: 'SYSTEM CONFIG',   accent: '#808080', accentDim: 'rgba(128,128,128,0.12)' },
+  '/fleet': { label: 'FLEET REGISTRY', accent: '#4080ff', accentDim: 'rgba(64,128,255,0.12)' },
+  '/trades': { label: 'TRADE LOG', accent: '#e8a020', accentDim: 'rgba(232,160,32,0.12)' },
+  '/refinery': { label: 'REFINERY LOG', accent: '#a060ff', accentDim: 'rgba(160,96,255,0.12)' },
+  '/wallet': { label: 'WALLET', accent: '#00e87a', accentDim: 'rgba(0,232,122,0.12)' },
+  '/settings': { label: 'SYSTEM CONFIG', accent: '#808080', accentDim: 'rgba(128,128,128,0.12)' }
 }
 
 export function TopBar() {
@@ -30,8 +30,10 @@ export function TopBar() {
     >
       {/* Logo */}
       <div className="flex items-center gap-2 shrink-0">
-        <span className="font-mono text-sm font-black tracking-tighter text-hud-cyan
-          drop-shadow-[0_0_8px_rgba(0,229,255,0.6)]">
+        <span
+          className="font-mono text-sm font-black tracking-tighter text-hud-cyan
+          drop-shadow-[0_0_8px_rgba(0,229,255,0.6)]"
+        >
           V.E.R.S.E.
         </span>
       </div>
@@ -41,11 +43,15 @@ export function TopBar() {
 
       {/* View label con accento colorato */}
       <div className="flex items-center gap-1.5">
-        <span className="font-mono text-[10px] select-none" style={{ color: meta.accent }}>[</span>
+        <span className="font-mono text-[10px] select-none" style={{ color: meta.accent }}>
+          [
+        </span>
         <span className="hud-label tracking-[0.15em]" style={{ color: meta.accent }}>
           {meta.label}
         </span>
-        <span className="font-mono text-[10px] select-none" style={{ color: meta.accent }}>]</span>
+        <span className="font-mono text-[10px] select-none" style={{ color: meta.accent }}>
+          ]
+        </span>
       </div>
 
       {/* Spacer */}
@@ -75,17 +81,22 @@ export function TopBar() {
               'border transition-all duration-150',
               balance >= 0
                 ? 'border-hud-green/30 hover:border-hud-green/60 hover:bg-hud-green/5'
-                : 'border-hud-red/30  hover:border-hud-red/60  hover:bg-hud-red/5',
+                : 'border-hud-red/30  hover:border-hud-red/60  hover:bg-hud-red/5'
             ].join(' ')}
           >
-            <span className="hud-label text-hud-dim group-hover:text-hud-muted transition-colors">BAL</span>
-            <span className={[
-              'font-mono text-xs font-bold tabular-nums transition-colors',
-              balance >= 0
-                ? 'text-hud-green drop-shadow-[0_0_6px_rgba(0,232,122,0.5)]'
-                : 'text-hud-red   drop-shadow-[0_0_6px_rgba(255,64,64,0.5)]'
-            ].join(' ')}>
-              {balance >= 0 ? '+' : ''}{formatUEC(balance)}
+            <span className="hud-label text-hud-dim group-hover:text-hud-muted transition-colors">
+              BAL
+            </span>
+            <span
+              className={[
+                'font-mono text-xs font-bold tabular-nums transition-colors',
+                balance >= 0
+                  ? 'text-hud-green drop-shadow-[0_0_6px_rgba(0,232,122,0.5)]'
+                  : 'text-hud-red   drop-shadow-[0_0_6px_rgba(255,64,64,0.5)]'
+              ].join(' ')}
+            >
+              {balance >= 0 ? '+' : ''}
+              {formatUEC(balance)}
             </span>
           </button>
         )}

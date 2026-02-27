@@ -30,8 +30,10 @@ export function TitleBar() {
 
       {/* Left: brand */}
       <div className="flex items-center gap-2.5 px-3 shrink-0">
-        <span className="w-1.5 h-1.5 bg-hud-cyan"
-          style={{ boxShadow: '0 0 5px rgba(0,229,255,0.8)' }} />
+        <span
+          className="w-1.5 h-1.5 bg-hud-cyan"
+          style={{ boxShadow: '0 0 5px rgba(0,229,255,0.8)' }}
+        />
         <span className="font-mono text-[10px] font-bold tracking-[0.25em] text-hud-cyan/80">
           V.E.R.S.E.
         </span>
@@ -66,10 +68,7 @@ export function TitleBar() {
             title={maximized ? 'Restore' : 'Maximize'}
             hoverClass="hover:bg-hud-blue/10 hover:text-hud-blue"
           >
-            {maximized
-              ? <Square className="h-3 w-3" />
-              : <Maximize2 className="h-3 w-3" />
-            }
+            {maximized ? <Square className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
           </TitleBtn>
 
           <TitleBtn
@@ -87,7 +86,11 @@ export function TitleBar() {
 }
 
 function TitleBtn({
-  onClick, title, hoverClass, className, children
+  onClick,
+  title,
+  hoverClass,
+  className,
+  children
 }: {
   onClick: () => void
   title: string
@@ -120,11 +123,7 @@ function Clock() {
     return () => clearInterval(id)
   }, [])
 
-  return (
-    <span className="font-mono text-[9px] tracking-widest text-hud-muted/50 pr-1">
-      {time}
-    </span>
-  )
+  return <span className="font-mono text-[9px] tracking-widest text-hud-muted/50 pr-1">{time}</span>
 }
 
 function formatTime(d: Date): string {

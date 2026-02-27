@@ -8,7 +8,12 @@ import wavyLines from '../../assets/wavy-lines.svg'
 
 const PANEL_VARIANTS = {
   initial: { opacity: 0, y: 24, scale: 0.97 },
-  animate: { opacity: 1, y: 0,  scale: 1,    transition: { duration: 0.35, ease: 'easeOut' as const, delay: 0.1 } }
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.35, ease: 'easeOut' as const, delay: 0.1 }
+  }
 }
 
 const LOGO_VARIANTS = {
@@ -25,9 +30,9 @@ interface OnboardingProps {
 
 export function Onboarding({ onComplete }: OnboardingProps) {
   const { setAppToken } = useAuthStore()
-  const [token, setToken]   = useState('')
+  const [token, setToken] = useState('')
   const [saving, setSaving] = useState(false)
-  const [error, setError]   = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const isValid = token.trim().length > 8
 
@@ -97,18 +102,18 @@ export function Onboarding({ onComplete }: OnboardingProps) {
           {/* Header */}
           <div className="flex items-center gap-3 px-5 py-4 border-b border-hud-border">
             <ShieldCheck className="h-4 w-4 text-hud-cyan shrink-0" />
-            <span className="hud-label text-hud-text tracking-widest">API AUTHENTICATION REQUIRED</span>
+            <span className="hud-label text-hud-text tracking-widest">
+              API AUTHENTICATION REQUIRED
+            </span>
           </div>
 
           <div className="p-5 space-y-5">
             {/* Description */}
             <div className="space-y-2">
-              <p className="font-mono text-sm text-hud-text">
-                UEX Corp Bearer Token
-              </p>
+              <p className="font-mono text-sm text-hud-text">UEX Corp Bearer Token</p>
               <p className="hud-label text-hud-muted leading-relaxed">
-                VERSE requires a UEX Corp Application Token to access market data,
-                refinery methods, commodity prices and station information.
+                VERSE requires a UEX Corp Application Token to access market data, refinery methods,
+                commodity prices and station information.
               </p>
               <button
                 onClick={openDocs}
@@ -144,11 +149,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
 
             {/* Actions */}
             <div className="flex gap-2 pt-1">
-              <Button
-                variant="hud-ghost"
-                className="flex-1 text-hud-muted"
-                onClick={onComplete}
-              >
+              <Button variant="hud-ghost" className="flex-1 text-hud-muted" onClick={onComplete}>
                 SKIP FOR NOW
               </Button>
               <Button

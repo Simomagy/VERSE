@@ -14,11 +14,7 @@ class RefineryService {
    * Restituisce il bonus yield % per una commodity in una location specifica.
    * Fa match case-insensitive sul nome. Ritorna null se non trovato.
    */
-  findYieldBonus(
-    yields: RefineryYield[],
-    commodity: string,
-    terminal: string
-  ): number | null {
+  findYieldBonus(yields: RefineryYield[], commodity: string, terminal: string): number | null {
     const normalizedCommodity = commodity.toLowerCase()
     const normalizedTerminal = terminal.toLowerCase()
 

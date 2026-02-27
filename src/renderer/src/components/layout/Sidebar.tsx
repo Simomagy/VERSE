@@ -14,15 +14,47 @@ interface NavItemConfig {
 }
 
 const navItems: NavItemConfig[] = [
-  { to: '/fleet',    icon: Ship,         label: 'FLEET',    accent: '#4080ff', iconActive: 'text-hud-blue',   bg: 'hover:bg-hud-blue/5'   },
-  { to: '/trades',   icon: History,      label: 'TRADES',   accent: '#e8a020', iconActive: 'text-hud-amber',  bg: 'hover:bg-hud-amber/5'  },
-  { to: '/refinery', icon: FlaskConical, label: 'REFINERY', accent: '#a060ff', iconActive: 'text-hud-purple', bg: 'hover:bg-hud-purple/5' },
-  { to: '/wallet',   icon: Wallet,       label: 'WALLET',   accent: '#00e87a', iconActive: 'text-hud-green',  bg: 'hover:bg-hud-green/5'  },
+  {
+    to: '/fleet',
+    icon: Ship,
+    label: 'FLEET',
+    accent: '#4080ff',
+    iconActive: 'text-hud-blue',
+    bg: 'hover:bg-hud-blue/5'
+  },
+  {
+    to: '/trades',
+    icon: History,
+    label: 'TRADES',
+    accent: '#e8a020',
+    iconActive: 'text-hud-amber',
+    bg: 'hover:bg-hud-amber/5'
+  },
+  {
+    to: '/refinery',
+    icon: FlaskConical,
+    label: 'REFINERY',
+    accent: '#a060ff',
+    iconActive: 'text-hud-purple',
+    bg: 'hover:bg-hud-purple/5'
+  },
+  {
+    to: '/wallet',
+    icon: Wallet,
+    label: 'WALLET',
+    accent: '#00e87a',
+    iconActive: 'text-hud-green',
+    bg: 'hover:bg-hud-green/5'
+  }
 ]
 
 const settingsItem: NavItemConfig = {
-  to: '/settings', icon: Settings, label: 'CONFIG',
-  accent: '#a060ff', iconActive: 'text-hud-purple', bg: 'hover:bg-hud-purple/5'
+  to: '/settings',
+  icon: Settings,
+  label: 'CONFIG',
+  accent: '#a060ff',
+  iconActive: 'text-hud-purple',
+  bg: 'hover:bg-hud-purple/5'
 }
 
 function NavItem({ to, icon: Icon, label, accent, iconActive, bg }: NavItemConfig) {
@@ -54,21 +86,21 @@ function NavItem({ to, icon: Icon, label, accent, iconActive, bg }: NavItemConfi
           <Icon
             className={cn(
               'h-5 w-5 transition-all duration-150',
-              isActive
-                ? `${iconActive} drop-shadow-[0_0_6px_currentColor]`
-                : ''
+              isActive ? `${iconActive} drop-shadow-[0_0_6px_currentColor]` : ''
             )}
             style={isActive ? { color: accent } : undefined}
           />
 
           {/* Tooltip */}
-          <span className="
+          <span
+            className="
             pointer-events-none absolute left-full ml-3 z-50
             px-2 py-1 bg-hud-panel border border-hud-border
             hud-label text-hud-text whitespace-nowrap
             opacity-0 group-hover:opacity-100
             transition-opacity duration-100
-          ">
+          "
+          >
             {label}
           </span>
         </>

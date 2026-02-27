@@ -115,9 +115,15 @@ class UEXClient {
     await this.loadTokens()
   }
 
-  getAppToken(): string { return this.appToken }
-  getUserToken(): string { return this.userToken }
-  getRemainingRequests(): number { return this.rateLimiter.getRemainingRequests() }
+  getAppToken(): string {
+    return this.appToken
+  }
+  getUserToken(): string {
+    return this.userToken
+  }
+  getRemainingRequests(): number {
+    return this.rateLimiter.getRemainingRequests()
+  }
 
   private isUserSecretKeyEndpoint(url: string): boolean {
     return USER_SECRET_KEY_ENDPOINTS.some((endpoint) => url.includes(endpoint))

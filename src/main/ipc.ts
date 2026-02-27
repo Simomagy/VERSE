@@ -1,12 +1,7 @@
 import { ipcMain, safeStorage, app } from 'electron'
 import Store from 'electron-store'
 import { randomUUID } from 'crypto'
-import {
-  getMainWindow,
-  hideMainWindow,
-  closeMainWindow,
-  showMainWindow
-} from './window'
+import { getMainWindow, hideMainWindow, closeMainWindow, showMainWindow } from './window'
 import { updateGlobalHotkey, getConfiguredHotkey } from './hotkeys'
 
 interface LocalShip {
@@ -59,7 +54,7 @@ interface LocalWalletEntry {
   description: string
   category: string
   dateAdded: number
-  sourceId?: string   // presente solo sulle voci generate automaticamente da un trade
+  sourceId?: string // presente solo sulle voci generate automaticamente da un trade
 }
 
 interface LocalRefineryJob {
@@ -142,7 +137,7 @@ export function setupIpcHandlers(): void {
         const res = await fetch(url, {
           method: 'GET',
           signal: controller.signal,
-          headers: { 'Accept': 'application/json' }
+          headers: { Accept: 'application/json' }
         })
         return res.status < 500
       } catch {
@@ -294,13 +289,19 @@ export function setupIpcHandlers(): void {
 
   ipcMain.handle('fleet:update', async (_, ship: LocalShip) => {
     const fleet = store.get('fleet', [])
-    store.set('fleet', fleet.map((s: LocalShip) => s.id === ship.id ? ship : s))
+    store.set(
+      'fleet',
+      fleet.map((s: LocalShip) => (s.id === ship.id ? ship : s))
+    )
     return ship
   })
 
   ipcMain.handle('fleet:remove', async (_, id: string) => {
     const fleet = store.get('fleet', [])
-    store.set('fleet', fleet.filter((s: LocalShip) => s.id !== id))
+    store.set(
+      'fleet',
+      fleet.filter((s: LocalShip) => s.id !== id)
+    )
     return { success: true }
   })
 
@@ -311,31 +312,31 @@ export function setupIpcHandlers(): void {
   // fare upsert senza creare duplicati.
   function syncTradeWallet(trade: LocalTrade): void {
     const wallet = store.get('wallet', []) as LocalWalletEntry[]
-    const label  = trade.locationFrom + (trade.locationTo ? ` → ${trade.locationTo}` : '')
+    const label = trade.locationFrom + (trade.locationTo ? ` → ${trade.locationTo}` : '')
 
     const newEntries: LocalWalletEntry[] = []
 
     if (trade.totalBuy > 0) {
       newEntries.push({
-        id:          `trade-buy-${trade.id}`,
-        type:        'expense',
-        amount:      trade.totalBuy,
+        id: `trade-buy-${trade.id}`,
+        type: 'expense',
+        amount: trade.totalBuy,
         description: `Buy: ${label}`,
-        category:    'Trading',
-        dateAdded:   trade.dateAdded,
-        sourceId:    trade.id
+        category: 'Trading',
+        dateAdded: trade.dateAdded,
+        sourceId: trade.id
       })
     }
 
     if (trade.totalSell > 0) {
       newEntries.push({
-        id:          `trade-sell-${trade.id}`,
-        type:        'income',
-        amount:      trade.totalSell,
+        id: `trade-sell-${trade.id}`,
+        type: 'income',
+        amount: trade.totalSell,
         description: `Sell: ${label}`,
-        category:    'Trading',
-        dateAdded:   trade.dateAdded,
-        sourceId:    trade.id
+        category: 'Trading',
+        dateAdded: trade.dateAdded,
+        sourceId: trade.id
       })
     }
 
@@ -345,8 +346,11 @@ export function setupIpcHandlers(): void {
   }
 
   function removeTradeWallet(tradeId: string): void {
-    const wallet  = store.get('wallet', []) as LocalWalletEntry[]
-    store.set('wallet', wallet.filter((e: LocalWalletEntry) => e.sourceId !== tradeId))
+    const wallet = store.get('wallet', []) as LocalWalletEntry[]
+    store.set(
+      'wallet',
+      wallet.filter((e: LocalWalletEntry) => e.sourceId !== tradeId)
+    )
   }
 
   ipcMain.handle('trades:get-all', async () => {
@@ -354,8 +358,8 @@ export function setupIpcHandlers(): void {
     // Migrazione: i vecchi trade (formato pre-multi-item) non hanno il campo items
     return trades.map((t) => ({
       ...t,
-      items:     Array.isArray(t.items)     ? t.items     : [],
-      totalBuy:  t.totalBuy  ?? 0,
+      items: Array.isArray(t.items) ? t.items : [],
+      totalBuy: t.totalBuy ?? 0,
       totalSell: t.totalSell ?? 0,
       netProfit: t.netProfit ?? 0
     }))
@@ -375,14 +379,20 @@ export function setupIpcHandlers(): void {
 
   ipcMain.handle('trades:update', async (_, updated: LocalTrade) => {
     const trades = store.get('trades', []) as LocalTrade[]
-    store.set('trades', trades.map((t: LocalTrade) => t.id === updated.id ? updated : t))
+    store.set(
+      'trades',
+      trades.map((t: LocalTrade) => (t.id === updated.id ? updated : t))
+    )
     syncTradeWallet(updated)
     return updated
   })
 
   ipcMain.handle('trades:remove', async (_, id: string) => {
     const trades = store.get('trades', [])
-    store.set('trades', trades.filter((t: LocalTrade) => t.id !== id))
+    store.set(
+      'trades',
+      trades.filter((t: LocalTrade) => t.id !== id)
+    )
     removeTradeWallet(id)
     return { success: true }
   })
@@ -406,14 +416,17 @@ export function setupIpcHandlers(): void {
 
   ipcMain.handle('refineryJobs:update', async (_, job: LocalRefineryJob) => {
     const jobs = store.get('refineryJobs', [])
-    const updated = jobs.map((j: LocalRefineryJob) => j.id === job.id ? job : j)
+    const updated = jobs.map((j: LocalRefineryJob) => (j.id === job.id ? job : j))
     store.set('refineryJobs', updated)
     return job
   })
 
   ipcMain.handle('refineryJobs:remove', async (_, id: string) => {
     const jobs = store.get('refineryJobs', [])
-    store.set('refineryJobs', jobs.filter((j: LocalRefineryJob) => j.id !== id))
+    store.set(
+      'refineryJobs',
+      jobs.filter((j: LocalRefineryJob) => j.id !== id)
+    )
     return { success: true }
   })
 
@@ -436,13 +449,19 @@ export function setupIpcHandlers(): void {
 
   ipcMain.handle('wallet:update', async (_, entry: LocalWalletEntry) => {
     const wallet = store.get('wallet', []) as LocalWalletEntry[]
-    store.set('wallet', wallet.map((e: LocalWalletEntry) => e.id === entry.id ? entry : e))
+    store.set(
+      'wallet',
+      wallet.map((e: LocalWalletEntry) => (e.id === entry.id ? entry : e))
+    )
     return entry
   })
 
   ipcMain.handle('wallet:remove', async (_, id: string) => {
     const wallet = store.get('wallet', [])
-    store.set('wallet', wallet.filter((e: LocalWalletEntry) => e.id !== id))
+    store.set(
+      'wallet',
+      wallet.filter((e: LocalWalletEntry) => e.id !== id)
+    )
     return { success: true }
   })
 }

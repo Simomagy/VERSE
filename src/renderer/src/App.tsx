@@ -38,13 +38,13 @@ function shouldDehydrateQuery(query: { queryKey: readonly unknown[] }): boolean 
 }
 
 function AppInit() {
-  const loadTokens    = useAuthStore(state => state.loadTokens)
-  const isAppTokenSet = useAuthStore(state => state.isAppTokenSet)
-  const isLoading     = useAuthStore(state => state.isLoading)
-  const loadSettings  = useSettingsStore(state => state.loadSettings)
-  const staticStatus  = useStaticDataStore(state => state.status)
+  const loadTokens = useAuthStore((state) => state.loadTokens)
+  const isAppTokenSet = useAuthStore((state) => state.isAppTokenSet)
+  const isLoading = useAuthStore((state) => state.isLoading)
+  const loadSettings = useSettingsStore((state) => state.loadSettings)
+  const staticStatus = useStaticDataStore((state) => state.status)
 
-  const [bootDone,       setBootDone]       = useState(false)
+  const [bootDone, setBootDone] = useState(false)
   const [onboardingDone, setOnboardingDone] = useState(false)
 
   useEffect(() => {
@@ -52,10 +52,26 @@ function AppInit() {
     loadSettings()
 
     // Pre-fetch delle query locali così sono in cache prima che l'utente navighi
-    queryClient.prefetchQuery({ queryKey: ['wallet', 'local'],   queryFn: () => window.api.wallet.getAll(),       staleTime: Infinity })
-    queryClient.prefetchQuery({ queryKey: ['fleet', 'local'],    queryFn: () => window.api.fleet.getAll(),        staleTime: Infinity })
-    queryClient.prefetchQuery({ queryKey: ['trades', 'local'],   queryFn: () => window.api.trades.getAll(),       staleTime: Infinity })
-    queryClient.prefetchQuery({ queryKey: ['refinery', 'jobs'],  queryFn: () => window.api.refineryJobs.getAll(), staleTime: Infinity })
+    queryClient.prefetchQuery({
+      queryKey: ['wallet', 'local'],
+      queryFn: () => window.api.wallet.getAll(),
+      staleTime: Infinity
+    })
+    queryClient.prefetchQuery({
+      queryKey: ['fleet', 'local'],
+      queryFn: () => window.api.fleet.getAll(),
+      staleTime: Infinity
+    })
+    queryClient.prefetchQuery({
+      queryKey: ['trades', 'local'],
+      queryFn: () => window.api.trades.getAll(),
+      staleTime: Infinity
+    })
+    queryClient.prefetchQuery({
+      queryKey: ['refinery', 'jobs'],
+      queryFn: () => window.api.refineryJobs.getAll(),
+      staleTime: Infinity
+    })
   }, [])
 
   useEffect(() => {

@@ -25,7 +25,7 @@ const rowVariants = {
     x: 0,
     transition: {
       opacity: { duration: 0.3, times: [0, 0.1, 0.22, 0.5, 0.72, 1] },
-      x:       { duration: 0.2, ease: 'easeOut' as const }
+      x: { duration: 0.2, ease: 'easeOut' as const }
     }
   }
 }
@@ -45,10 +45,14 @@ interface DatasetRowProps {
 
 function DatasetRow({ label, status, count }: DatasetRowProps) {
   const statusConfig: Record<DatasetStatus, { icon: string; color: string; text: string }> = {
-    idle:    { icon: '○', color: 'text-hud-muted',  text: 'standby'    },
-    loading: { icon: '◎', color: 'text-hud-cyan',   text: 'loading...' },
-    done:    { icon: '◆', color: 'text-hud-green',  text: count !== undefined ? `${count} records` : 'done' },
-    error:   { icon: '✕', color: 'text-hud-red',    text: 'failed'     }
+    idle: { icon: '○', color: 'text-hud-muted', text: 'standby' },
+    loading: { icon: '◎', color: 'text-hud-cyan', text: 'loading...' },
+    done: {
+      icon: '◆',
+      color: 'text-hud-green',
+      text: count !== undefined ? `${count} records` : 'done'
+    },
+    error: { icon: '✕', color: 'text-hud-red', text: 'failed' }
   }
 
   const cfg = statusConfig[status]
@@ -58,7 +62,9 @@ function DatasetRow({ label, status, count }: DatasetRowProps) {
       variants={rowVariants}
       className="flex items-center gap-3 font-mono text-xs tracking-widest"
     >
-      <span className={`w-3 text-center ${cfg.color} ${status === 'loading' ? 'animate-pulse' : ''}`}>
+      <span
+        className={`w-3 text-center ${cfg.color} ${status === 'loading' ? 'animate-pulse' : ''}`}
+      >
         {cfg.icon}
       </span>
       <span className="text-hud-muted w-24 uppercase">{label}</span>
@@ -71,11 +77,22 @@ function DatasetRow({ label, status, count }: DatasetRowProps) {
 
 export function BootScreen() {
   const {
-    status, progress, error, load,
-    ships, systems, celestialObjects, commodities, spaceStations, cities, outposts
+    status,
+    progress,
+    error,
+    load,
+    ships,
+    systems,
+    celestialObjects,
+    commodities,
+    spaceStations,
+    cities,
+    outposts
   } = useStaticDataStore()
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    load()
+  }, [])
 
   return (
     <div className="flex h-screen w-screen bg-hud-deep items-center justify-center overflow-hidden relative">
@@ -96,7 +113,6 @@ export function BootScreen() {
       <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-hud-cyan opacity-60" />
 
       <div className="flex flex-col items-center gap-8 w-80">
-
         {/* Logo con flicker HUD */}
         <motion.div
           className="text-center"
@@ -133,19 +149,40 @@ export function BootScreen() {
           <p className="font-mono text-[9px] tracking-[0.3em] text-hud-muted uppercase mb-1">
             Initializing systems
           </p>
-          <DatasetRow label="Vessels"     status={progress.ships}       count={ships.length || undefined} />
-          <DatasetRow label="Systems"     status={progress.systems}     count={systems.length || undefined} />
-          <DatasetRow label="Locations"   status={progress.locations}   count={celestialObjects.length || undefined} />
-          <DatasetRow label="Commodities" status={progress.commodities} count={commodities.length || undefined} />
-          <DatasetRow label="Stations"    status={progress.stations}    count={spaceStations.length || undefined} />
-          <DatasetRow label="Cities"      status={progress.cities}      count={cities.length || undefined} />
-          <DatasetRow label="Outposts"    status={progress.outposts}    count={outposts.length || undefined} />
+          <DatasetRow label="Vessels" status={progress.ships} count={ships.length || undefined} />
+          <DatasetRow
+            label="Systems"
+            status={progress.systems}
+            count={systems.length || undefined}
+          />
+          <DatasetRow
+            label="Locations"
+            status={progress.locations}
+            count={celestialObjects.length || undefined}
+          />
+          <DatasetRow
+            label="Commodities"
+            status={progress.commodities}
+            count={commodities.length || undefined}
+          />
+          <DatasetRow
+            label="Stations"
+            status={progress.stations}
+            count={spaceStations.length || undefined}
+          />
+          <DatasetRow label="Cities" status={progress.cities} count={cities.length || undefined} />
+          <DatasetRow
+            label="Outposts"
+            status={progress.outposts}
+            count={outposts.length || undefined}
+          />
         </motion.div>
 
         {/* Divider */}
         <motion.div
           className="w-full h-px bg-hud-border"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.3 }}
         />
 
@@ -157,14 +194,10 @@ export function BootScreen() {
           animate="animate"
         >
           {status === 'loading' && (
-            <span className="text-hud-cyan animate-pulse uppercase">
-              Syncing with network...
-            </span>
+            <span className="text-hud-cyan animate-pulse uppercase">Syncing with network...</span>
           )}
           {status === 'ready' && (
-            <span className="text-hud-green uppercase">
-              All systems nominal — launching
-            </span>
+            <span className="text-hud-green uppercase">All systems nominal — launching</span>
           )}
           {status === 'error' && (
             <div className="flex flex-col gap-1 items-center">

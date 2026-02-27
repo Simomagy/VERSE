@@ -69,11 +69,11 @@ function MenuOverlay({
   // Aggiusta la posizione per non uscire dallo schermo
   const vw = window.innerWidth
   const vh = window.innerHeight
-  const MENU_W = 192   // stimato
+  const MENU_W = 192 // stimato
   const MENU_H = items.length * 32 + 8
 
   const left = position.x + MENU_W > vw ? vw - MENU_W - 8 : position.x
-  const top  = position.y + MENU_H > vh ? vh - MENU_H - 8 : position.y
+  const top = position.y + MENU_H > vh ? vh - MENU_H - 8 : position.y
 
   return createPortal(
     <div
@@ -148,19 +148,10 @@ export function ContextMenu({ items, children, className }: ContextMenuProps) {
 
   return (
     <>
-      <div
-        onContextMenu={handleContextMenu}
-        className={cn('contents', className)}
-      >
+      <div onContextMenu={handleContextMenu} className={cn('contents', className)}>
         {children}
       </div>
-      {position && (
-        <MenuOverlay
-          items={items}
-          position={position}
-          onClose={close}
-        />
-      )}
+      {position && <MenuOverlay items={items} position={position} onClose={close} />}
     </>
   )
 }

@@ -12,7 +12,7 @@ interface SettingsState extends AppSettings {
   clearError: () => void
 }
 
-export const useSettingsStore = create<SettingsState>((set, get) => ({
+export const useSettingsStore = create<SettingsState>((set) => ({
   // Default values
   autoStart: false,
   minimizeToTray: true,

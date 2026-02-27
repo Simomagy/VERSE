@@ -19,15 +19,11 @@ export const useUIStore = create<UIState>((set) => ({
   isOnline: true,
   rateLimitRemaining: 60,
 
-  toggleSidebar: () =>
-    set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+  toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
 
-  setCurrentView: (view: string) =>
-    set({ currentView: view }),
+  setCurrentView: (view: string) => set({ currentView: view }),
 
-  setOnlineStatus: (status: boolean) =>
-    set({ isOnline: status }),
+  setOnlineStatus: (status: boolean) => set({ isOnline: status }),
 
-  setRateLimitRemaining: (remaining: number) =>
-    set({ rateLimitRemaining: remaining })
+  setRateLimitRemaining: (remaining: number) => set({ rateLimitRemaining: remaining })
 }))

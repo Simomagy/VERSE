@@ -1,9 +1,6 @@
 import { session } from 'electron'
 
-const ALLOWED_ORIGINS = [
-  'https://uexcorp.space',
-  'https://api.star-citizen.wiki'
-]
+const ALLOWED_ORIGINS = ['https://uexcorp.space', 'https://api.star-citizen.wiki']
 
 /**
  * Patcha le response headers del server UEX per consentire le richieste
@@ -15,9 +12,7 @@ const ALLOWED_ORIGINS = [
  */
 export function setupCorsHeaders(): void {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-    const isUexRequest = ALLOWED_ORIGINS.some((origin) =>
-      details.url.startsWith(origin)
-    )
+    const isUexRequest = ALLOWED_ORIGINS.some((origin) => details.url.startsWith(origin))
 
     if (!isUexRequest) {
       callback({ responseHeaders: details.responseHeaders })

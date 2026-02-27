@@ -3,9 +3,9 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { uexClient } from '../api/uex.client'
 import type { CommodityPrice } from '../api/types'
 
-const PRICES_KEY      = ['commodity-prices-all']
-const STALE_TIME_MS   = 5 * 60 * 1000   // auto-stale dopo 5 min
-const COOLDOWN_MS     = 60 * 1000        // cooldown refresh manuale: 1 min
+const PRICES_KEY = ['commodity-prices-all']
+const STALE_TIME_MS = 5 * 60 * 1000 // auto-stale dopo 5 min
+const COOLDOWN_MS = 60 * 1000 // cooldown refresh manuale: 1 min
 
 export function useCommodityPrices() {
   const queryClient = useQueryClient()
@@ -48,9 +48,7 @@ export function useCommodityPrices() {
       const c = norm(commodity)
       const l = norm(location)
       if (!c || !l) return null
-      const match = prices.find(
-        (p) => norm(p.commodity_name) === c && norm(p.terminal_name) === l
-      )
+      const match = prices.find((p) => norm(p.commodity_name) === c && norm(p.terminal_name) === l)
       if (!match) return null
       const price = operation === 'buy' ? match.price_buy : match.price_sell
       return price > 0 ? price : null

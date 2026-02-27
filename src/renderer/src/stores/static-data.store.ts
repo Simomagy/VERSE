@@ -1,5 +1,13 @@
 import { create } from 'zustand'
-import type { WikiVehicle, WikiStarSystem, WikiCelestialObject, Commodity, UEXSpaceStation, UEXCity, UEXOutpost } from '../api/types'
+import type {
+  WikiVehicle,
+  WikiStarSystem,
+  WikiCelestialObject,
+  Commodity,
+  UEXSpaceStation,
+  UEXCity,
+  UEXOutpost
+} from '../api/types'
 import {
   fetchAllVehicles,
   fetchAllSystems,
@@ -49,7 +57,13 @@ const INITIAL_PROGRESS: DatasetProgress = {
 }
 
 const DATASET_KEYS: (keyof DatasetProgress)[] = [
-  'ships', 'systems', 'locations', 'commodities', 'stations', 'cities', 'outposts'
+  'ships',
+  'systems',
+  'locations',
+  'commodities',
+  'stations',
+  'cities',
+  'outposts'
 ]
 
 export const useStaticDataStore = create<StaticDataState>((set, get) => ({

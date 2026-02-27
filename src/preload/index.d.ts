@@ -1,10 +1,10 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 
 interface WindowAPI {
-  minimize:    () => void
-  maximize:    () => void
-  close:       () => void
-  show:        () => void
+  minimize: () => void
+  maximize: () => void
+  close: () => void
+  show: () => void
   isMaximized: () => Promise<boolean>
 }
 
@@ -24,7 +24,9 @@ interface SettingsData {
 
 interface SettingsAPI {
   get: () => Promise<SettingsData>
-  set: (settings: Partial<Omit<SettingsData, 'hotkey'>>) => Promise<{ success: boolean; error?: string }>
+  set: (
+    settings: Partial<Omit<SettingsData, 'hotkey'>>
+  ) => Promise<{ success: boolean; error?: string }>
   setHotkey: (hotkey: string) => Promise<{ success: boolean }>
 }
 
@@ -64,7 +66,7 @@ interface LocalTrade {
 
 interface FleetAPI {
   getAll: () => Promise<LocalShip[]>
-  add:    (ship: Omit<LocalShip, 'id' | 'dateAdded'>) => Promise<LocalShip>
+  add: (ship: Omit<LocalShip, 'id' | 'dateAdded'>) => Promise<LocalShip>
   update: (ship: LocalShip) => Promise<LocalShip>
   remove: (id: string) => Promise<{ success: boolean }>
 }
@@ -113,7 +115,7 @@ interface LocalWalletEntry {
   description: string
   category: string
   dateAdded: number
-  sourceId?: string   // voci generate automaticamente da un trade
+  sourceId?: string // voci generate automaticamente da un trade
 }
 
 interface WalletAPI {
@@ -124,7 +126,7 @@ interface WalletAPI {
 }
 
 interface AppAPI {
-  version:   () => Promise<string>
+  version: () => Promise<string>
   checkApis: () => Promise<{ uex: boolean; wiki: boolean }>
 }
 
@@ -133,7 +135,7 @@ interface UpdateInfo {
 }
 
 interface UpdaterAPI {
-  onUpdateAvailable:  (cb: (info: UpdateInfo) => void) => void
+  onUpdateAvailable: (cb: (info: UpdateInfo) => void) => void
   onUpdateDownloaded: (cb: (info: UpdateInfo) => void) => void
   install: () => void
 }

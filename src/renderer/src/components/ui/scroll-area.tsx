@@ -3,11 +3,7 @@ import { cn } from '@renderer/lib/utils'
 
 const ScrollArea = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn('relative overflow-auto scrollbar-thin', className)}
-      {...props}
-    >
+    <div ref={ref} className={cn('relative overflow-auto scrollbar-thin', className)} {...props}>
       {children}
     </div>
   )

@@ -15,7 +15,7 @@ export function useDataExtract(type: DataExtractType) {
 
 export function useBestRoutesData() {
   const { data, ...rest } = useDataExtract('commodities_routes')
-  
+
   return {
     ...rest,
     routes: data ? dataService.parseRoutesText(data) : []
@@ -24,7 +24,7 @@ export function useBestRoutesData() {
 
 export function useCommodityPricesData() {
   const { data, ...rest } = useDataExtract('commodities_prices')
-  
+
   return {
     ...rest,
     prices: data ? dataService.parsePricesText(data) : []

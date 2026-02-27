@@ -12,21 +12,25 @@ import type { LocalShip, WikiVehicle } from '../api/types'
 
 const SIZE_LABELS: Record<string, string> = {
   vehicle: 'VEH',
-  snub:    'SNUB',
-  small:   'S',
-  medium:  'M',
-  large:   'L',
-  capital: 'CAP',
+  snub: 'SNUB',
+  small: 'S',
+  medium: 'M',
+  large: 'L',
+  capital: 'CAP'
 }
 
 // ── Ship card con edit inline del nickname ────────────────────────────────
-function ShipCard({ ship, onRemove, onUpdateNickname }: {
+function ShipCard({
+  ship,
+  onRemove,
+  onUpdateNickname
+}: {
   ship: LocalShip
   onRemove: () => void
   onUpdateNickname: (nickname: string) => void
 }) {
   const [editing, setEditing] = useState(false)
-  const [draft, setDraft]     = useState(ship.nickname)
+  const [draft, setDraft] = useState(ship.nickname)
 
   const confirmEdit = () => {
     const trimmed = draft.trim()
@@ -60,15 +64,22 @@ function ShipCard({ ship, onRemove, onUpdateNickname }: {
                   className="h-6 text-xs px-2"
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') confirmEdit()
+                    if (e.key === 'Escape') cancelEdit()
+                  }}
                   autoFocus
                 />
-                <button onClick={confirmEdit}
-                  className="p-1 text-hud-green hover:text-hud-green/80 transition-colors">
+                <button
+                  onClick={confirmEdit}
+                  className="p-1 text-hud-green hover:text-hud-green/80 transition-colors"
+                >
                   <Check className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={cancelEdit}
-                  className="p-1 text-hud-muted hover:text-hud-red transition-colors">
+                <button
+                  onClick={cancelEdit}
+                  className="p-1 text-hud-muted hover:text-hud-red transition-colors"
+                >
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -95,15 +106,24 @@ function ShipCard({ ship, onRemove, onUpdateNickname }: {
         {/* Actions (visibili on hover) */}
         <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
           {!editing && (
-            <Button variant="hud-ghost" size="icon"
+            <Button
+              variant="hud-ghost"
+              size="icon"
               className="border-hud-blue/30 text-hud-muted hover:text-hud-blue hover:border-hud-blue"
-              onClick={() => { setDraft(ship.nickname); setEditing(true) }}>
+              onClick={() => {
+                setDraft(ship.nickname)
+                setEditing(true)
+              }}
+            >
               <Pencil className="h-3 w-3" />
             </Button>
           )}
-          <Button variant="hud-ghost" size="icon"
+          <Button
+            variant="hud-ghost"
+            size="icon"
             className="border-hud-red/40 text-hud-muted hover:text-hud-red hover:border-hud-red"
-            onClick={onRemove}>
+            onClick={onRemove}
+          >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
@@ -114,13 +134,15 @@ function ShipCard({ ship, onRemove, onUpdateNickname }: {
 
 // ── Modal aggiunta nave ───────────────────────────────────────────────────
 function AddShipModal({
-  onClose, vehicles, loadingVehicles
+  onClose,
+  vehicles,
+  loadingVehicles
 }: {
   onClose: () => void
   vehicles: WikiVehicle[]
   loadingVehicles: boolean
 }) {
-  const [search, setSearch]     = useState('')
+  const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<WikiVehicle | null>(null)
   const [nickname, setNickname] = useState('')
   const addShip = useAddShip()
@@ -168,7 +190,10 @@ function AddShipModal({
             <span className="w-1.5 h-1.5 bg-hud-blue" style={{ boxShadow: '0 0 6px #4080ff' }} />
             <span className="hud-label text-hud-blue tracking-widest">ADD VESSEL</span>
           </div>
-          <button onClick={onClose} className="text-hud-muted hover:text-hud-red transition-colors p-1">
+          <button
+            onClick={onClose}
+            className="text-hud-muted hover:text-hud-red transition-colors p-1"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -178,7 +203,9 @@ function AddShipModal({
             <motion.div
               key="search"
               className="flex flex-col flex-1 min-h-0"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.12 }}
             >
               {/* Search */}
@@ -208,7 +235,10 @@ function AddShipModal({
                     <button
                       key={v.uuid}
                       className="w-full text-left hud-row px-5 py-3 flex items-center justify-between transition-colors"
-                      onClick={() => { setSelected(v); setNickname(v.name) }}
+                      onClick={() => {
+                        setSelected(v)
+                        setNickname(v.name)
+                      }}
                     >
                       <div className="min-w-0">
                         <span className="font-mono text-sm text-hud-text">{v.name}</span>
@@ -234,14 +264,17 @@ function AddShipModal({
             <motion.div
               key="confirm"
               className="p-5 space-y-4"
-              initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -12 }}
               transition={{ duration: 0.15 }}
             >
               {/* Selected ship info */}
               <div className="border border-hud-blue/30 bg-hud-blue/5 p-3">
                 <p className="font-mono text-sm font-bold text-hud-blue">{selected.name}</p>
                 <p className="hud-label text-hud-muted mt-0.5">
-                  {selected.manufacturer?.name} · {selected.role} · {SIZE_LABELS[selected.size] ?? selected.size}
+                  {selected.manufacturer?.name} · {selected.role} ·{' '}
+                  {SIZE_LABELS[selected.size] ?? selected.size}
                 </p>
               </div>
 
@@ -297,8 +330,10 @@ export function FleetView() {
         <div className="flex items-center gap-3">
           <Ship className="h-5 w-5 text-hud-blue drop-shadow-[0_0_4px_rgba(64,128,255,0.8)]" />
           <div>
-            <h1 className="font-mono text-sm font-bold tracking-[0.15em] text-hud-blue uppercase"
-              style={{ textShadow: '0 0 8px rgba(64,128,255,0.4)' }}>
+            <h1
+              className="font-mono text-sm font-bold tracking-[0.15em] text-hud-blue uppercase"
+              style={{ textShadow: '0 0 8px rgba(64,128,255,0.4)' }}
+            >
               Fleet Registry
             </h1>
             <p className="hud-label mt-0.5 text-hud-muted">
@@ -331,8 +366,10 @@ export function FleetView() {
       ) : fleet.length === 0 ? (
         <div className="flex flex-col items-center justify-center flex-1 gap-3">
           <div className="border border-hud-blue/20 bg-hud-blue/5 p-8">
-            <Ship className="h-12 w-12 text-hud-blue/40 mx-auto mb-3
-              drop-shadow-[0_0_8px_rgba(64,128,255,0.3)]" />
+            <Ship
+              className="h-12 w-12 text-hud-blue/40 mx-auto mb-3
+              drop-shadow-[0_0_8px_rgba(64,128,255,0.3)]"
+            />
             <p className="hud-label text-hud-blue text-center">NO VESSELS REGISTERED</p>
             <p className="hud-label text-hud-muted text-center mt-1">
               {vehicles.length > 0

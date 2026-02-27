@@ -15,8 +15,7 @@ export function useLocalTrades() {
 export function useAddTrade() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (trade: Omit<LocalTrade, 'id' | 'dateAdded'>) =>
-      window.api.trades.add(trade),
+    mutationFn: (trade: Omit<LocalTrade, 'id' | 'dateAdded'>) => window.api.trades.add(trade),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TRADES_KEY })
       queryClient.invalidateQueries({ queryKey: WALLET_KEY })

@@ -136,15 +136,15 @@ export interface AppSettings {
 
 // Nave nella flotta locale dell'utente
 export interface LocalShip {
-  id: string             // uuid generato localmente
-  nickname: string       // nome personalizzato dall'utente
-  wikiSlug: string       // slug dalla Star Citizen Wiki
-  wikiName: string       // nome ufficiale dalla Wiki
+  id: string // uuid generato localmente
+  nickname: string // nome personalizzato dall'utente
+  wikiSlug: string // slug dalla Star Citizen Wiki
+  wikiName: string // nome ufficiale dalla Wiki
   manufacturer: string
   role: string
   size: string
-  cargoCapacity: number  // SCU
-  dateAdded: number      // timestamp
+  cargoCapacity: number // SCU
+  dateAdded: number // timestamp
 }
 
 // Space station — da space_stations
@@ -190,9 +190,9 @@ export interface RefineryMethod {
   id: number
   name: string
   code: string
-  rating_yield: 1 | 2 | 3   // 1=low 2=medium 3=high
-  rating_cost: 1 | 2 | 3    // 1=low 2=medium 3=high
-  rating_speed: 1 | 2 | 3   // 1=slow 2=medium 3=fast
+  rating_yield: 1 | 2 | 3 // 1=low 2=medium 3=high
+  rating_cost: 1 | 2 | 3 // 1=low 2=medium 3=high
+  rating_speed: 1 | 2 | 3 // 1=slow 2=medium 3=fast
   date_modified: number
 }
 
@@ -205,7 +205,7 @@ export interface RefineryYield {
   terminal_name: string
   star_system_name: string | null
   planet_name: string | null
-  value: number         // yield bonus %
+  value: number // yield bonus %
   value_week: number
   value_month: number
   date_modified: number
@@ -216,9 +216,9 @@ export interface RefineryMineral {
   mineral: string
   scuInput: number
   yieldPercent: number
-  scuOutput: number         // scuInput * yieldPercent / 100
+  scuOutput: number // scuInput * yieldPercent / 100
   pricePerScu: number
-  estimatedValue: number    // scuOutput * pricePerScu
+  estimatedValue: number // scuOutput * pricePerScu
 }
 
 // Job di raffineria locale (salvato in electron-store)
@@ -229,12 +229,12 @@ export interface LocalRefineryJob {
   method: string
   methodCode: string
   minerals: RefineryMineral[]
-  totalEstimatedValue: number   // somma di minerals[].estimatedValue
+  totalEstimatedValue: number // somma di minerals[].estimatedValue
   refineCost: number
-  netProfit: number             // totalEstimatedValue - refineCost
+  netProfit: number // totalEstimatedValue - refineCost
   refineDurationMinutes: number // durata totale raffinazione; 0 = non impostata
   notes: string
-  dateAdded: number             // timestamp avvio job
+  dateAdded: number // timestamp avvio job
 }
 
 // Voce di bilancio locale
@@ -243,11 +243,11 @@ export type WalletEntryType = 'income' | 'expense' | 'adjustment'
 export interface LocalWalletEntry {
   id: string
   type: WalletEntryType
-  amount: number          // sempre positivo; income aggiunge, expense sottrae, adjustment resetta
+  amount: number // sempre positivo; income aggiunge, expense sottrae, adjustment resetta
   description: string
-  category: string        // es. "Trading", "Mining", "Refinery", "Other"
+  category: string // es. "Trading", "Mining", "Refinery", "Other"
   dateAdded: number
-  sourceId?: string       // ID del trade che ha generato questa voce (auto-generated)
+  sourceId?: string // ID del trade che ha generato questa voce (auto-generated)
 }
 
 // Singola voce commodity all'interno di un trade
@@ -256,7 +256,7 @@ export interface TradeItem {
   operation: 'buy' | 'sell'
   scu: number
   pricePerScu: number
-  totalPrice: number    // calcolato o inserito manualmente
+  totalPrice: number // calcolato o inserito manualmente
 }
 
 // Trade locale — supporta più commodity per singola operazione
@@ -267,12 +267,12 @@ export interface LocalTrade {
   locationFrom: string
   locationTo: string
   items: TradeItem[]
-  totalBuy: number      // somma dei buy items
-  totalSell: number     // somma dei sell items
-  netProfit: number     // totalSell - totalBuy
+  totalBuy: number // somma dei buy items
+  totalSell: number // somma dei sell items
+  netProfit: number // totalSell - totalBuy
   notes: string
   dateAdded: number
-  source?: string       // origine del trade: 'refinery' | undefined
+  source?: string // origine del trade: 'refinery' | undefined
 }
 
 // ─── Star Citizen Wiki API types ───────────────────────────────────────────

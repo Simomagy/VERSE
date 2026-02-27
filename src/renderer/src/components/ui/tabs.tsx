@@ -25,10 +25,7 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn(
-        'inline-flex items-center border-b border-hud-border gap-0',
-        className
-      )}
+      className={cn('inline-flex items-center border-b border-hud-border gap-0', className)}
       {...props}
     />
   )
@@ -49,7 +46,7 @@ const TabsTrigger = React.forwardRef<
       ref={ref}
       className={cn(
         'relative px-5 py-2 hud-label transition-colors duration-150 ' +
-        'focus-visible:outline-none disabled:pointer-events-none disabled:opacity-40',
+          'focus-visible:outline-none disabled:pointer-events-none disabled:opacity-40',
         isActive
           ? 'text-hud-cyan border-b-2 border-hud-cyan -mb-px'
           : 'text-hud-muted hover:text-hud-text border-b-2 border-transparent -mb-px',
@@ -71,13 +68,7 @@ const TabsContent = React.forwardRef<
 
   if (context.value !== value) return null
 
-  return (
-    <div
-      ref={ref}
-      className={cn('focus-visible:outline-none', className)}
-      {...props}
-    />
-  )
+  return <div ref={ref} className={cn('focus-visible:outline-none', className)} {...props} />
 })
 TabsContent.displayName = 'TabsContent'
 

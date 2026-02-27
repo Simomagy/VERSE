@@ -24,11 +24,12 @@ export function ComboInput({
   const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const listId = useId()
 
-  const filtered = value.trim().length === 0
-    ? []
-    : suggestions
-        .filter((s) => s.toLowerCase().includes(value.toLowerCase().trim()))
-        .slice(0, MAX_SUGGESTIONS)
+  const filtered =
+    value.trim().length === 0
+      ? []
+      : suggestions
+          .filter((s) => s.toLowerCase().includes(value.toLowerCase().trim()))
+          .slice(0, MAX_SUGGESTIONS)
 
   const select = useCallback(
     (item: string) => {

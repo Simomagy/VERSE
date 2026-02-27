@@ -117,14 +117,14 @@ src/
 
 ## Data Sources
 
-| Data | Source |
-|---|---|
-| Commodity prices | UEX Corp API `/commodities_prices_all` |
-| Space stations, cities, outposts | UEX Corp API (filtered by star system) |
-| Refinery methods | UEX Corp API `/refinery_methods` |
-| Ships | Star Citizen Wiki API `/vehicles` |
-| Star systems and locations | Star Citizen Wiki API |
-| Fleet, trades, refinery jobs, wallet | Local (electron-store, encrypted) |
+| Data                                 | Source                                 |
+| ------------------------------------ | -------------------------------------- |
+| Commodity prices                     | UEX Corp API `/commodities_prices_all` |
+| Space stations, cities, outposts     | UEX Corp API (filtered by star system) |
+| Refinery methods                     | UEX Corp API `/refinery_methods`       |
+| Ships                                | Star Citizen Wiki API `/vehicles`      |
+| Star systems and locations           | Star Citizen Wiki API                  |
+| Fleet, trades, refinery jobs, wallet | Local (electron-store, encrypted)      |
 
 **UEX API limits:** 14,400 requests/day — 10 requests/minute. VERSE caches all static data at startup and uses a 5-minute stale time for price data to stay well within limits.
 

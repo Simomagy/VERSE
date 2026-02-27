@@ -34,17 +34,20 @@ export function ConfirmDialog({
     return () => document.removeEventListener('keydown', onKey)
   }, [onCancel])
 
-  const isDanger  = variant === 'danger'
-  const accentBorder = isDanger ? 'border-hud-red/40'  : 'border-hud-cyan/40'
-  const accentText   = isDanger ? 'text-hud-red'       : 'text-hud-cyan'
-  const accentBg     = isDanger ? 'bg-hud-red/10'      : 'bg-hud-cyan/10'
-  const accentHover  = isDanger ? 'hover:bg-hud-red/20 hover:border-hud-red hover:shadow-[0_0_12px_rgba(255,60,60,0.3)]'
+  const isDanger = variant === 'danger'
+  const accentBorder = isDanger ? 'border-hud-red/40' : 'border-hud-cyan/40'
+  const accentText = isDanger ? 'text-hud-red' : 'text-hud-cyan'
+  const accentBg = isDanger ? 'bg-hud-red/10' : 'bg-hud-cyan/10'
+  const accentHover = isDanger
+    ? 'hover:bg-hud-red/20 hover:border-hud-red hover:shadow-[0_0_12px_rgba(255,60,60,0.3)]'
     : 'hover:bg-hud-cyan/20 hover:border-hud-cyan hover:shadow-[0_0_12px_rgba(0,229,255,0.3)]'
 
   return createPortal(
     <motion.div
       className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      onMouseDown={(e) => { if (e.target === e.currentTarget) onCancel() }}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onCancel()
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -53,8 +56,8 @@ export function ConfirmDialog({
       <motion.div
         className="relative w-full max-w-sm bg-hud-panel shadow-[0_0_40px_rgba(0,0,0,0.8)]"
         initial={{ opacity: 0, y: 16, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0,  scale: 1,    transition: { duration: 0.18, ease: 'easeOut' } }}
-        exit={{    opacity: 0, y: 8,  scale: 0.98,  transition: { duration: 0.12, ease: 'easeIn'  } }}
+        animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.18, ease: 'easeOut' } }}
+        exit={{ opacity: 0, y: 8, scale: 0.98, transition: { duration: 0.12, ease: 'easeIn' } }}
       >
         {/* Angolini HUD */}
         <span className="absolute top-0 left-0 w-3 h-px bg-hud-red/60" />
@@ -70,7 +73,10 @@ export function ConfirmDialog({
               {title}
             </span>
           </div>
-          <button onClick={onCancel} className="text-hud-muted hover:text-hud-red transition-colors p-1">
+          <button
+            onClick={onCancel}
+            className="text-hud-muted hover:text-hud-red transition-colors p-1"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -98,7 +104,10 @@ export function ConfirmDialog({
             className={cn(
               'flex-1 h-9 flex items-center justify-center gap-2 border font-mono text-xs',
               'tracking-widest uppercase transition-all duration-150',
-              accentBorder, accentText, accentBg, accentHover
+              accentBorder,
+              accentText,
+              accentBg,
+              accentHover
             )}
           >
             {isDanger && <Trash2 className="h-3.5 w-3.5" />}
@@ -121,6 +130,7 @@ interface PendingConfirm {
   action: () => void
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useConfirmDialog() {
   const [pending, setPending] = useState<PendingConfirm | null>(null)
 
@@ -137,7 +147,10 @@ export function useConfirmDialog() {
           message={pending.message}
           confirmLabel={pending.confirmLabel}
           variant={pending.variant ?? 'danger'}
-          onConfirm={() => { pending.action(); setPending(null) }}
+          onConfirm={() => {
+            pending.action()
+            setPending(null)
+          }}
           onCancel={() => setPending(null)}
         />
       )}
@@ -157,41 +170,49 @@ interface SelectAllCheckboxProps {
   accentColor?: string
 }
 
-export function SelectAllCheckbox({ total, selected, onToggle, accentColor = 'hud-cyan' }: SelectAllCheckboxProps) {
-  const allSelected  = total > 0 && selected === total
+export function SelectAllCheckbox({
+  total,
+  selected,
+  onToggle,
+  accentColor = 'hud-cyan'
+}: SelectAllCheckboxProps) {
+  const allSelected = total > 0 && selected === total
   const someSelected = selected > 0 && selected < total
-  const active       = allSelected || someSelected
+  const active = allSelected || someSelected
 
   // Mappa accentColor → classi Tailwind concrete (necessario per PurgeCSS/JIT)
-  const colorMap: Record<string, { border: string; bg: string; text: string; hoverBorder: string; hoverBg: string }> = {
+  const colorMap: Record<
+    string,
+    { border: string; bg: string; text: string; hoverBorder: string; hoverBg: string }
+  > = {
     'hud-green': {
-      border:      'border-hud-green',
-      bg:          'bg-hud-green/20',
-      text:        'text-hud-green',
+      border: 'border-hud-green',
+      bg: 'bg-hud-green/20',
+      text: 'text-hud-green',
       hoverBorder: 'hover:border-hud-green/60',
-      hoverBg:     'hover:bg-hud-green/5'
+      hoverBg: 'hover:bg-hud-green/5'
     },
     'hud-amber': {
-      border:      'border-hud-amber',
-      bg:          'bg-hud-amber/20',
-      text:        'text-hud-amber',
+      border: 'border-hud-amber',
+      bg: 'bg-hud-amber/20',
+      text: 'text-hud-amber',
       hoverBorder: 'hover:border-hud-amber/60',
-      hoverBg:     'hover:bg-hud-amber/5'
+      hoverBg: 'hover:bg-hud-amber/5'
     },
     'hud-red': {
-      border:      'border-hud-red',
-      bg:          'bg-hud-red/20',
-      text:        'text-hud-red',
+      border: 'border-hud-red',
+      bg: 'bg-hud-red/20',
+      text: 'text-hud-red',
       hoverBorder: 'hover:border-hud-red/60',
-      hoverBg:     'hover:bg-hud-red/5'
+      hoverBg: 'hover:bg-hud-red/5'
     },
     'hud-cyan': {
-      border:      'border-hud-cyan',
-      bg:          'bg-hud-cyan/20',
-      text:        'text-hud-cyan',
+      border: 'border-hud-cyan',
+      bg: 'bg-hud-cyan/20',
+      text: 'text-hud-cyan',
       hoverBorder: 'hover:border-hud-cyan/60',
-      hoverBg:     'hover:bg-hud-cyan/5'
-    },
+      hoverBg: 'hover:bg-hud-cyan/5'
+    }
   }
 
   const c = colorMap[accentColor] ?? colorMap['hud-cyan']
@@ -209,9 +230,7 @@ export function SelectAllCheckbox({ total, selected, onToggle, accentColor = 'hu
       )}
     >
       {/* Dash per stato parziale, checkmark per tutto selezionato */}
-      <span className="text-[10px] font-bold leading-none">
-        {someSelected ? '−' : '✓'}
-      </span>
+      <span className="text-[10px] font-bold leading-none">{someSelected ? '−' : '✓'}</span>
     </button>
   )
 }

@@ -15,8 +15,7 @@ export function useWalletEntries() {
 export function useAddWalletEntry() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (entry: Omit<LocalWalletEntry, 'id' | 'dateAdded'>) =>
-      window.api.wallet.add(entry),
+    mutationFn: (entry: Omit<LocalWalletEntry, 'id' | 'dateAdded'>) => window.api.wallet.add(entry),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: WALLET_KEY })
   })
 }
@@ -47,8 +46,8 @@ export function computeBalance(entries: LocalWalletEntry[]): number {
   const sorted = [...entries].sort((a, b) => a.dateAdded - b.dateAdded)
   let balance = 0
   for (const e of sorted) {
-    if (e.type === 'income')     balance += e.amount
-    else if (e.type === 'expense')  balance -= e.amount
+    if (e.type === 'income') balance += e.amount
+    else if (e.type === 'expense') balance -= e.amount
     else if (e.type === 'adjustment') balance = e.amount
   }
   return balance

@@ -1,5 +1,10 @@
 import { useStaticDataStore } from '../stores/static-data.store'
-import type { CelestialObjectType, UEXSpaceStation, UEXCity, WikiCelestialObject } from '../api/types'
+import type {
+  CelestialObjectType,
+  UEXSpaceStation,
+  UEXCity,
+  WikiCelestialObject
+} from '../api/types'
 
 const LOCATION_TYPES: CelestialObjectType[] = ['PLANET', 'SATELLITE', 'MANMADE']
 
@@ -28,8 +33,7 @@ export function useStaticData() {
   const getCelestialObjectsBySystem = (systemId: number): WikiCelestialObject[] =>
     store.celestialObjects.filter((o) => o.system_id === systemId)
 
-  const findShipBySlug = (slug: string) =>
-    store.ships.find((s) => s.slug === slug) ?? null
+  const findShipBySlug = (slug: string) => store.ships.find((s) => s.slug === slug) ?? null
 
   const findCommodityByName = (name: string) =>
     store.commodities.find((c) => c.name.toLowerCase() === name.toLowerCase()) ?? null

@@ -14,8 +14,7 @@ export function useLocalFleet() {
 export function useAddShip() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (ship: Omit<LocalShip, 'id' | 'dateAdded'>) =>
-      window.api.fleet.add(ship),
+    mutationFn: (ship: Omit<LocalShip, 'id' | 'dateAdded'>) => window.api.fleet.add(ship),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: FLEET_KEY })
   })
 }

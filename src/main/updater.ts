@@ -2,11 +2,11 @@ import { ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import { getMainWindow } from './window'
 
-const CHECK_DELAY_MS = 10_000  // attende 10s dopo il boot prima del primo check
+const CHECK_DELAY_MS = 10_000 // attende 10s dopo il boot prima del primo check
 
 export function setupAutoUpdater(): void {
-  autoUpdater.autoDownload        = true   // download silenzioso in background
-  autoUpdater.autoInstallOnAppQuit = true  // installa automaticamente alla chiusura
+  autoUpdater.autoDownload = true // download silenzioso in background
+  autoUpdater.autoInstallOnAppQuit = true // installa automaticamente alla chiusura
 
   autoUpdater.on('update-available', (info) => {
     console.log(`[AutoUpdater] Update available: v${info.version}`)

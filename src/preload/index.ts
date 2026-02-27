@@ -2,10 +2,10 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 const windowAPI = {
-  minimize:    () => ipcRenderer.send('window:minimize'),
-  maximize:    () => ipcRenderer.send('window:maximize'),
-  close:       () => ipcRenderer.send('window:close'),
-  show:        () => ipcRenderer.send('window:show'),
+  minimize: () => ipcRenderer.send('window:minimize'),
+  maximize: () => ipcRenderer.send('window:maximize'),
+  close: () => ipcRenderer.send('window:close'),
+  show: () => ipcRenderer.send('window:show'),
   isMaximized: () => ipcRenderer.invoke('window:is-maximized') as Promise<boolean>
 }
 
@@ -24,7 +24,7 @@ const settingsAPI = {
 
 const fleetAPI = {
   getAll: () => ipcRenderer.invoke('fleet:get-all'),
-  add:    (ship: any) => ipcRenderer.invoke('fleet:add', ship),
+  add: (ship: any) => ipcRenderer.invoke('fleet:add', ship),
   update: (ship: any) => ipcRenderer.invoke('fleet:update', ship),
   remove: (id: string) => ipcRenderer.invoke('fleet:remove', id)
 }
@@ -51,7 +51,7 @@ const walletAPI = {
 }
 
 const appAPI = {
-  version:   () => ipcRenderer.invoke('app:version') as Promise<string>,
+  version: () => ipcRenderer.invoke('app:version') as Promise<string>,
   checkApis: () => ipcRenderer.invoke('app:check-apis') as Promise<{ uex: boolean; wiki: boolean }>
 }
 
@@ -83,8 +83,8 @@ if (process.contextIsolated) {
     console.error('Failed to expose APIs:', error)
   }
 } else {
-  // @ts-ignore
+  // @ts-ignore: contextBridge not available outside sandbox — direct assignment fallback
   window.electron = electronAPI
-  // @ts-ignore
+  // @ts-ignore: contextBridge not available outside sandbox — direct assignment fallback
   window.api = api
 }
