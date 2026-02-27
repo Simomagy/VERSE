@@ -1,156 +1,151 @@
-# VERSE - UEX Corp Companion App
+# VERSE
 
-> Desktop companion app for Star Citizen traders, powered by UEX Corp API 2.0
+VERSE is a Windows desktop companion for Star Citizen traders and miners. It connects to the [UEX Corp API 2.0](https://uexcorp.space) for live market data and stores all personal records locally using encrypted storage.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Electron](https://img.shields.io/badge/Electron-39.2.6-47848f?logo=electron)
-![React](https://img.shields.io/badge/React-19.2.1-61dafb?logo=react)
+Built with Electron, React, and TypeScript.
+
+---
 
 ## Features
 
-- **Market Data**: Real-time commodity prices and best trade routes
-- **Fleet Management**: Track your personal vehicle collection
-- **Trade History**: Log and analyze your trading activities
-- **Community Stats**: Access aggregated data from UEX community
-- **System Tray**: Minimalist overlay accessible via global hotkey
-- **Secure Storage**: Encrypted token storage using Electron safeStorage
+**Trade Log**
+Record buy and sell runs with multiple commodities per run. UEX terminal prices are auto-filled based on location and commodity. A matching sell run can be created from any existing buy run in one click.
 
-## Screenshots
+**Refinery Log**
+Track refinery jobs with per-mineral input/output breakdown, yield percentages, and refining cost. Each job shows a live countdown timer. Sell trades can be created directly from one or multiple refinery jobs.
 
-*Coming soon*
+**Fleet Registry**
+Manage your personal fleet. Ship data (manufacturer, role, cargo capacity) is sourced from the Star Citizen Wiki API. Custom nicknames are supported.
 
-## Installation
+**Wallet**
+Record income, expenses, and balance adjustments. The current balance is always visible in the top bar. Trade runs automatically register their buy/sell amounts as wallet entries.
 
-### Prerequisites
+**Auto-Update**
+The app checks GitHub Releases in the background on startup. When a new version is downloaded, a notification appears in the status bar. Clicking it installs the update and restarts the app.
 
-- Node.js 18+ and npm
-- Windows 10/11 (primary target platform)
+---
 
-### Setup
+## Requirements
 
-1. Clone the repository
+- Windows 10 or 11
+- Node.js 20+ and npm (for development)
+- A [UEX Corp API token](https://uexcorp.space/api/my-apps) (requested on first launch)
+
+---
+
+## Development Setup
+
 ```bash
-git clone <repository-url>
+git clone https://github.com/Simomagy/VERSE.git
 cd VERSE
-```
-
-2. Install dependencies
-```bash
 npm install
-```
-
-3. Get your UEX API token
-   - Visit [UEX My Apps](https://uexcorp.space/api/my-apps)
-   - Create a new application
-   - Copy your API token
-
-4. Run in development mode
-```bash
 npm run dev
 ```
+
+The first launch will prompt for your UEX Bearer token. This can also be configured later in Settings.
+
+---
 
 ## Building
 
 ```bash
-# Build for Windows
+# Build installer for Windows (no publish)
 npm run build:win
 
-# Build without packaging (faster)
+# Build and publish to GitHub Releases
+npm run build:release
+
+# Quick build without packaging
 npm run build:unpack
 ```
 
-## Usage
+### App Icon
 
-### First Launch
+Place your icon files in the `build/` directory before packaging:
 
-1. Launch VERSE
-2. Go to Settings (gear icon in sidebar)
-3. Enter your UEX API token
-4. (Optional) Add your personal token for fleet and trade history access
+- `build/icon.ico` — Windows taskbar and installer icon (256x256 minimum)
+- `build/icon.png` — Fallback (512x512)
 
-### Global Hotkey
+---
 
-Default: `Ctrl+Shift+V` (Windows) / `Cmd+Shift+V` (Mac)
+## Releasing
 
-Press the hotkey anytime to show/hide the VERSE overlay.
+Releases are automated via GitHub Actions. To publish a new version:
 
-### System Tray
+1. Update `version` in `package.json`
+2. Commit and tag the release:
 
-VERSE runs in the system tray. Right-click the tray icon to:
-- Open the app
-- Access settings
-- Quit the application
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+```
 
-## Tech Stack
+The workflow builds a Windows NSIS installer and publishes it to GitHub Releases. Existing installations will detect the update automatically within 10 seconds of the next app launch.
 
-- **Electron** - Desktop framework
-- **React** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **TanStack Query** - Data fetching & caching
-- **Zustand** - State management
-- **Tailwind CSS** - Styling
-- **shadcn/ui** - UI components
-- **electron-store** - Persistent storage
-- **axios** - HTTP client
+### Required GitHub Secret
+
+In `Settings > Secrets and variables > Actions`, add:
+
+- `GH_TOKEN` — Personal Access Token with `repo` scope
+
+---
 
 ## Architecture
 
 ```
-VERSE/
-├── src/
-│   ├── main/          # Electron main process
-│   │   ├── index.ts   # Entry point
-│   │   ├── window.ts  # Window management
-│   │   ├── tray.ts    # System tray
-│   │   ├── hotkeys.ts # Global shortcuts
-│   │   └── ipc.ts     # IPC handlers
-│   ├── preload/       # Preload scripts
-│   │   └── index.ts   # Context bridge
-│   └── renderer/      # React application
-│       ├── api/       # API clients & services
-│       ├── components/# UI components
-│       ├── hooks/     # Custom React hooks
-│       ├── stores/    # Zustand stores
-│       ├── views/     # Page components
-│       └── lib/       # Utilities
+src/
+  main/           Electron main process
+    index.ts      Entry point and app lifecycle
+    window.ts     BrowserWindow setup (frameless, custom title bar)
+    ipc.ts        All IPC handlers (fleet, trades, refineries, wallet, app)
+    updater.ts    Auto-updater (electron-updater, silent download)
+    tray.ts       System tray
+    hotkeys.ts    Global shortcut registration
+    cors.ts       CORS header patching for UEX API calls
+  preload/
+    index.ts      Context bridge — exposes window.api to renderer
+  renderer/
+    api/          UEX API client, SC Wiki client, type definitions
+    components/   Layout (TitleBar, Sidebar, StatusBar, BootScreen) and UI primitives
+    hooks/        TanStack Query hooks for local data and UEX prices
+    stores/       Zustand stores (auth, settings, static data)
+    views/        TradesView, RefineriesView, FleetView, WalletView, SettingsView
+    lib/          Utility functions (formatting, animations, abbreviations)
 ```
-
-## API Rate Limiting
-
-UEX API allows:
-- 86,400 requests per day
-- 60 requests per minute
-
-VERSE implements automatic rate limiting and intelligent caching to stay within these limits.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT License - See LICENSE file for details
-
-## Acknowledgments
-
-- [UEX Corp](https://uexcorp.space) for providing the API
-- Star Citizen community for data contributions
-- Cloud Imperium Games for Star Citizen
-
-## Support
-
-For issues and feature requests, please use the [GitHub Issues](issues) page.
-
-## Roadmap
-
-- [ ] Auto-update support
-- [ ] Custom themes
-- [ ] Trade route calculator
-- [ ] Price alerts & notifications
-- [ ] Multi-language support
-- [ ] macOS & Linux builds
 
 ---
 
-**Disclaimer**: This is a fan-made tool and is not affiliated with Cloud Imperium Games or UEX Corp.
+## Data Sources
+
+| Data | Source |
+|---|---|
+| Commodity prices | UEX Corp API `/commodities_prices_all` |
+| Space stations, cities, outposts | UEX Corp API (filtered by star system) |
+| Refinery methods | UEX Corp API `/refinery_methods` |
+| Ships | Star Citizen Wiki API `/vehicles` |
+| Star systems and locations | Star Citizen Wiki API |
+| Fleet, trades, refinery jobs, wallet | Local (electron-store, encrypted) |
+
+**UEX API limits:** 14,400 requests/day — 10 requests/minute. VERSE caches all static data at startup and uses a 5-minute stale time for price data to stay well within limits.
+
+---
+
+## Tech Stack
+
+- Electron 39 — desktop shell, IPC, secure storage
+- React 19 + TypeScript — renderer UI
+- electron-vite — build toolchain
+- Tailwind CSS — styling (custom HUD/cockpit theme)
+- TanStack Query — data fetching and caching
+- Zustand — global state
+- electron-store — local persistent storage
+- electron-updater — auto-update from GitHub Releases
+- Framer Motion — UI animations
+- Axios — HTTP client
+- lucide-react — icons
+
+---
+
+## Disclaimer
+
+VERSE is a fan-made tool and is not affiliated with Cloud Imperium Games or UEX Corp.

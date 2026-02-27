@@ -17,8 +17,7 @@ import { useStaticData } from '../hooks/useStaticData'
 import { formatUEC, formatRelativeTime, abbrev } from '../lib/utils'
 import { ContextMenu } from '../components/ui/context-menu'
 import { useConfirmDialog, SelectAllCheckbox } from '../components/ui/confirm-dialog'
-import type { LocalTrade, TradeItem } from '../api/types'
-import type { SellPrefillRow } from './RefineriesView'
+import type { LocalTrade, TradeItem, LocalRefineryJob } from '../api/types'
 
 // ── Field wrapper ─────────────────────────────────────────────────────────
 
@@ -205,6 +204,172 @@ function ItemsTable({
   )
 }
 
+// ── Pannello laterale unificato: refinery + live trade recap ─────────────
+
+function ModalSidePanel({ rows, refineryJobs }: {
+  rows: ItemRow[]
+  refineryJobs?: LocalRefineryJob[]
+}) {
+  const fScu = (n: number | string) => {
+    const v = typeof n === 'string' ? parseFloat(n) || 0 : n
+    return v === 0 ? '0' : v % 1 === 0 ? String(v) : v.toFixed(2)
+  }
+
+  // Sezione raffineria
+  const refTotals = useMemo(() => refineryJobs?.length ? ({
+    estimated: refineryJobs.reduce((a, j) => a + j.totalEstimatedValue, 0),
+    cost:      refineryJobs.reduce((a, j) => a + j.refineCost, 0),
+    net:       refineryJobs.reduce((a, j) => a + j.netProfit, 0)
+  }) : null, [refineryJobs])
+
+  // Sezione trade live
+  const filledRows = rows.filter((r) => r.commodity.trim())
+  const buyRows    = filledRows.filter((r) => r.operation === 'buy')
+  const sellRows   = filledRows.filter((r) => r.operation === 'sell')
+  const tradeTotals = useMemo(() => {
+    const buy  = buyRows.reduce((a, r)  => a + computeTotal(r), 0)
+    const sell = sellRows.reduce((a, r) => a + computeTotal(r), 0)
+    return { buy, sell, net: sell - buy }
+  }, [buyRows, sellRows])
+
+  const ItemLine = ({ r, color }: { r: ItemRow; color: string }) => {
+    const total = computeTotal(r)
+    return (
+      <div className="grid grid-cols-[1fr_auto] gap-x-2 items-start pl-1 mb-0.5">
+        <div className="min-w-0">
+          <span className="font-mono text-xs text-hud-text block truncate" title={r.commodity}>
+            {abbrev(r.commodity)}
+          </span>
+          <span className="hud-label text-hud-dim">
+            {r.scu ? `${fScu(parseFloat(r.scu) || 0)} SCU` : '—'}
+            {r.pricePerScu ? ` · ${r.autoPriced ? '~' : ''}${formatUEC(parseFloat(r.pricePerScu))}/SCU` : ''}
+          </span>
+        </div>
+        <span className={`font-mono text-xs whitespace-nowrap ${color}`}>
+          {total > 0 ? formatUEC(total) : '—'}
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-[16rem] shrink-0 border-l border-hud-border flex flex-col bg-hud-deep/40">
+      {/* Header */}
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-hud-border shrink-0">
+        <span className="w-1.5 h-1.5 bg-hud-amber shrink-0" />
+        <span className="hud-label text-hud-amber tracking-widest">SUMMARY</span>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hud">
+
+        {/* ── Refinery jobs (se presenti) ── */}
+        {refineryJobs?.length ? (
+          <div className="p-3 border-b border-hud-border/50 space-y-3">
+            <div className="flex items-center gap-1.5">
+              <span className="hud-label text-hud-purple">⬡ REFINERY</span>
+              <span className="hud-label text-hud-dim ml-auto">
+                {refineryJobs.length} JOB{refineryJobs.length > 1 ? 'S' : ''}
+              </span>
+            </div>
+
+            {refineryJobs.map((job, idx) => (
+              <div key={job.id}>
+                <div className="hud-label text-hud-dim mb-1">
+                  #{idx + 1} {abbrev(job.refinery, 16)} · {job.methodCode}
+                </div>
+                {job.minerals.filter((m) => m.scuOutput > 0).map((m, mi) => (
+                  <div key={mi} className="grid grid-cols-[1fr_auto_auto] gap-x-2 items-baseline pl-1">
+                    <span className="font-mono text-xs text-hud-text truncate" title={m.mineral}>
+                      {abbrev(m.mineral)}
+                    </span>
+                    <span className="font-mono text-xs text-hud-muted whitespace-nowrap">
+                      {fScu(m.scuOutput)} SCU
+                    </span>
+                    <span className="font-mono text-xs text-hud-cyan whitespace-nowrap">
+                      {formatUEC(m.estimatedValue)}
+                    </span>
+                  </div>
+                ))}
+                <div className="flex justify-between mt-1 pt-1 border-t border-hud-border/20 pl-1">
+                  <span className="hud-label text-hud-dim">net</span>
+                  <span className={`font-mono text-xs font-bold ${job.netProfit >= 0 ? 'text-hud-cyan' : 'text-hud-red'}`}>
+                    {job.netProfit >= 0 ? '+' : ''}{formatUEC(job.netProfit)}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {refTotals && refineryJobs.length > 1 && (
+              <div className="pt-2 border-t border-hud-border/40 space-y-0.5">
+                <div className="flex justify-between">
+                  <span className="hud-label text-hud-muted">estimated</span>
+                  <span className="font-mono text-xs text-hud-text">{formatUEC(refTotals.estimated)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="hud-label text-hud-muted">cost</span>
+                  <span className="font-mono text-xs text-hud-amber">{formatUEC(refTotals.cost)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {/* ── Trade recap live ── */}
+        <div className="p-3 space-y-2.5">
+          <span className="hud-label text-hud-amber">TRADE RECAP</span>
+
+          {filledRows.length === 0 ? (
+            <p className="hud-label text-hud-dim py-3 text-center leading-relaxed">
+              Fill in commodities<br />to see the recap
+            </p>
+          ) : (
+            <>
+              {buyRows.length > 0 && (
+                <div>
+                  <div className="hud-label text-hud-green mb-1">↓ BUY</div>
+                  {buyRows.map((r) => <ItemLine key={r.key} r={r} color="text-hud-green" />)}
+                </div>
+              )}
+              {sellRows.length > 0 && (
+                <div>
+                  <div className="hud-label text-hud-cyan mb-1">↑ SELL</div>
+                  {sellRows.map((r) => <ItemLine key={r.key} r={r} color="text-hud-cyan" />)}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Totali trade footer */}
+      <div className="shrink-0 p-3 border-t border-hud-border space-y-1">
+        <div className="flex justify-between">
+          <span className="hud-label text-hud-muted">BUY</span>
+          <span className="font-mono text-xs text-hud-green">
+            {tradeTotals.buy > 0 ? formatUEC(tradeTotals.buy) : '—'}
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span className="hud-label text-hud-muted">SELL</span>
+          <span className="font-mono text-xs text-hud-cyan">
+            {tradeTotals.sell > 0 ? formatUEC(tradeTotals.sell) : '—'}
+          </span>
+        </div>
+        <div className="flex justify-between pt-1 border-t border-hud-border/40">
+          <span className="hud-label text-hud-muted font-bold">NET</span>
+          <span className={`font-mono text-xs font-bold ${
+            tradeTotals.net > 0 ? 'text-hud-cyan' : tradeTotals.net < 0 ? 'text-hud-red' : 'text-hud-dim'
+          }`}>
+            {tradeTotals.net !== 0
+              ? (tradeTotals.net > 0 ? '+' : '') + formatUEC(tradeTotals.net)
+              : '—'}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Modal aggiunta trade ──────────────────────────────────────────────────
 
 interface TradeHeader {
@@ -221,53 +386,48 @@ interface AddTradeModalProps {
   editTrade?: LocalTrade | null  // se presente → modalità edit (update); null/undefined → nuovo
   initialHeader?: Partial<TradeHeader>
   initialRows?: ItemRow[]
+  source?: string               // e.g. 'refinery'
+  refineryJobs?: LocalRefineryJob[]
 }
 
-function AddTradeModal({ onClose, editTrade, initialHeader, initialRows }: AddTradeModalProps) {
+function AddTradeModal({ onClose, editTrade, initialHeader, initialRows, source, refineryJobs }: AddTradeModalProps) {
   const { data: fleet = [] } = useLocalFleet()
   const addTrade = useAddTrade()
   const updateTrade = useUpdateTrade()
   const { commodities, getTradeLocations } = useStaticData()
-  const { getPriceAt, isFetching: pricesFetching, cooldown, refresh: refreshPrices, dataUpdatedAt } = useCommodityPrices()
+  const { getPriceAt, terminalNames, isFetching: pricesFetching, cooldown, refresh: refreshPrices, dataUpdatedAt } = useCommodityPrices()
 
   const [header, setHeader] = useState<TradeHeader>({ ...EMPTY_HEADER, ...initialHeader })
   const [rows, setRows] = useState<ItemRow[]>(initialRows ?? [emptyRow()])
 
   const commoditySuggestions = useMemo(() => commodities.map((c) => c.name), [commodities])
+  // Se i prezzi UEX sono caricati, usiamo i terminal_name reali come suggestions
+  // (corrispondono esattamente alle chiavi usate dal lookup getPriceAt)
   const locationSuggestions = useMemo(
-    () => getTradeLocations(),
+    () => terminalNames.length > 0 ? terminalNames : getTradeLocations(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getTradeLocations]
+    [terminalNames, getTradeLocations]
   )
 
   // Auto-fill pricePerScu per righe con commodity valida e prezzo vuoto/auto.
   // Viene rieseguito quando cambiano le locations header, o arrivano nuovi dati prezzi.
   useEffect(() => {
-    console.log('[AutoPrice:effect] triggered — locationFrom:', header.locationFrom, '| locationTo:', header.locationTo, '| dataUpdatedAt:', dataUpdatedAt)
+    console.log('[AutoPrice:useEffect] locationFrom:', header.locationFrom, 'locationTo:', header.locationTo, 'dataUpdatedAt:', dataUpdatedAt)
     setRows((prev) => {
       let changed = false
       const next = prev.map((r) => {
-        if (r.pricePerScu && !r.autoPriced) {
-          console.log(`[AutoPrice:effect] SKIP row "${r.commodity}" (${r.operation}) — manual price: "${r.pricePerScu}"`)
-          return r
-        }
+        if (r.pricePerScu && !r.autoPriced) return r  // prezzo manuale, non toccare
         const loc = r.operation === 'buy' ? header.locationFrom : header.locationTo
-        if (!r.commodity.trim() || !loc.trim()) {
-          console.log(`[AutoPrice:effect] SKIP row "${r.commodity}" (${r.operation}) — commodity or location empty (loc: "${loc}")`)
-          return r
-        }
+        if (!r.commodity.trim() || !loc.trim()) return r
         const price = getPriceAt(r.commodity, loc, r.operation)
-        console.log(`[AutoPrice:effect] lookup "${r.commodity}" @ "${loc}" [${r.operation}] → price: ${price}`)
         if (!price) {
           if (r.autoPriced && r.pricePerScu) {
-            console.log(`[AutoPrice:effect] CLEAR row "${r.commodity}" — was auto, UEX no longer has price`)
             changed = true
             return { ...r, pricePerScu: '', autoPriced: false }
           }
           return r
         }
         if (r.autoPriced && String(price) === r.pricePerScu) return r
-        console.log(`[AutoPrice:effect] FILL row "${r.commodity}" (${r.operation}) @ "${loc}" → ${price}`)
         changed = true
         return { ...r, pricePerScu: String(price), autoPriced: true }
       })
@@ -280,22 +440,40 @@ function AddTradeModal({ onClose, editTrade, initialHeader, initialRows }: AddTr
     setRows((prev) => prev.map((r) => {
       if (r.key !== key) return r
       const updated = { ...r, ...updates }
-      // L'utente ha digitato manualmente un prezzo: rimuovi flag auto
+
+      // L'utente ha digitato manualmente un prezzo: rimuovi flag auto e stop
       if ('pricePerScu' in updates) {
         updated.autoPriced = false
+        return updated
       }
-      // Commodity o operation cambiata: tenta auto-fill se il prezzo è vuoto/auto
-      if (('commodity' in updates || 'operation' in updates) &&
-          (!updated.pricePerScu || updated.autoPriced)) {
-        const loc = updated.operation === 'buy' ? header.locationFrom : header.locationTo
+
+      const loc = updated.operation === 'buy' ? header.locationFrom : header.locationTo
+
+      // Commodity o operation cambiati: il vecchio prezzo è stale → aggiorna sempre
+      if ('commodity' in updates || 'operation' in updates) {
         const price = getPriceAt(updated.commodity, loc, updated.operation)
-        console.log(`[AutoPrice:updateRow] lookup "${updated.commodity}" @ "${loc}" [${updated.operation}] → price: ${price}`)
+        console.log('[AutoPrice:updateRow] Commodity:', updated.commodity, 'Location:', loc, 'Operation:', updated.operation, 'Price:', price)
         if (price) {
-          console.log(`[AutoPrice:updateRow] FILL "${updated.commodity}" → ${price}`)
+          console.log('[AutoPrice:updateRow] Setting price:', price)
+          updated.pricePerScu = String(price)
+          updated.autoPriced = true
+        } else if (updated.autoPriced) {
+          console.log('[AutoPrice:updateRow] Clearing price because UEX has no price for the new combo')
+          // Era auto-priced ma UEX non ha il prezzo per la nuova combo → pulisci
+          updated.pricePerScu = ''
+          updated.autoPriced = false
+        }
+      }
+
+      // SCU cambiato: tenta auto-fill solo se il prezzo è ancora vuoto
+      if ('scu' in updates && !updated.pricePerScu && updated.commodity.trim() && loc.trim()) {
+        const price = getPriceAt(updated.commodity, loc, updated.operation)
+        if (price) {
           updated.pricePerScu = String(price)
           updated.autoPriced = true
         }
       }
+
       return updated
     }))
   }, [header.locationFrom, header.locationTo, getPriceAt])
@@ -347,7 +525,8 @@ function AddTradeModal({ onClose, editTrade, initialHeader, initialRows }: AddTr
       totalBuy:     totals.buy,
       totalSell:    totals.sell,
       netProfit:    totals.profit,
-      notes:        header.notes.trim()
+      notes:        header.notes.trim(),
+      ...(source ? { source } : {})
     }
 
     if (editTrade) {
@@ -367,11 +546,12 @@ function AddTradeModal({ onClose, editTrade, initialHeader, initialRows }: AddTr
       exit="exit"
     >
       <motion.div
-        className="w-full max-w-2xl bg-hud-panel border border-hud-border shadow-[0_0_40px_rgba(232,160,32,0.08)]"
+        className="w-full max-w-[56rem] bg-hud-panel border border-hud-border
+          shadow-[0_0_40px_rgba(232,160,32,0.08)] flex flex-col max-h-[88vh]"
         variants={MODAL_VARIANTS}
       >
         {/* Header modal */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-hud-border">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-hud-border shrink-0">
           <div className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 bg-hud-amber" />
             <span className="hud-label text-hud-text tracking-widest">
@@ -400,7 +580,9 @@ function AddTradeModal({ onClose, editTrade, initialHeader, initialRows }: AddTr
           </button>
         </div>
 
-        <div className="p-5 space-y-5 max-h-[80vh] overflow-y-auto scrollbar-hud">
+        {/* Body: form a sinistra, riepilogo raffineria a destra */}
+        <div className="flex flex-1 min-h-0">
+        <div className="flex-1 min-w-0 overflow-y-auto scrollbar-hud p-5 space-y-5">
           {/* ── Header route ── */}
           <div className="grid grid-cols-2 gap-3">
             <Field label="FROM" required>
@@ -481,8 +663,12 @@ function AddTradeModal({ onClose, editTrade, initialHeader, initialRows }: AddTr
           </Field>
         </div>
 
+        {/* Pannello laterale: presente su tutti i modali */}
+        <ModalSidePanel rows={rows} refineryJobs={refineryJobs} />
+        </div>{/* end body flex */}
+
         {/* Footer modal */}
-        <div className="flex gap-2 px-5 py-3 border-t border-hud-border">
+        <div className="flex gap-2 px-5 py-3 border-t border-hud-border shrink-0">
           <Button variant="hud-ghost" className="flex-1" onClick={onClose}>CANCEL</Button>
           <Button
             variant="hud"
@@ -555,6 +741,12 @@ function TradeRow({ trade, selected, onSelect, onEdit, onRemove, onCreateSell }:
             )}
             {trade.shipName && (
               <span className="hud-label text-hud-dim">· {abbrev(trade.shipName, 18)}</span>
+            )}
+            {trade.source === 'refinery' && (
+              <span className="hud-label px-1.5 py-0.5 border border-hud-amber/40
+                bg-hud-amber/10 text-hud-amber tracking-widest">
+                ⬡ REF
+              </span>
             )}
           </div>
           {/* Item tags */}
@@ -665,9 +857,11 @@ function TradeStats({ trades }: { trades: LocalTrade[] }) {
 // ── Main view ─────────────────────────────────────────────────────────────
 
 interface SellModalState {
-  editTrade?: LocalTrade           // undefined = nuovo trade (da raffineria)
+  editTrade?: LocalTrade           // undefined = nuovo trade
   initialHeader: Partial<TradeHeader>
   initialRows: ItemRow[]
+  source?: string                  // e.g. 'refinery'
+  refineryJobs?: LocalRefineryJob[] // jobs di origine per il riepilogo laterale
 }
 
 export function TradesView() {
@@ -729,23 +923,36 @@ export function TradesView() {
     }
   }
 
-  // Prefill da raffinerie: apre direttamente il modal sell come nuovo trade.
-  // pricePerScu parte vuoto: l'auto-fill UEX lo compilerà quando l'utente sceglie locationTo.
+  // Navigazione da raffinerie: pre-compila locationFrom e righe di vendita con SCU output.
   useEffect(() => {
-    const prefill = (location.state as { prefillSell?: SellPrefillRow[] } | null)?.prefillSell
-    if (prefill && prefill.length > 0) {
-      const rows: ItemRow[] = prefill.map((r) => ({
-        key:         r.key,
-        commodity:   r.commodity,
-        operation:   'sell' as const,
-        scu:         r.scu,
-        pricePerScu: '',         // vuoto: viene auto-compilato da UEX
-        totalManual: false,
-        totalPrice:  '',
-        autoPriced:  false
-      }))
-      setSellModal({ editTrade: undefined, initialHeader: {}, initialRows: rows })
-      // Pulisce lo state dalla history così un back+forward non riapre il modal
+    const state = location.state as {
+      fromRefinery?: boolean
+      refineryLocation?: string
+      refineryJobs?: LocalRefineryJob[]
+    } | null
+    if (state?.fromRefinery) {
+      // Una riga di vendita per ogni minerale con scuOutput > 0, prezzo vuoto per UEX auto-fill
+      const prefillRows: ItemRow[] = (state.refineryJobs ?? []).flatMap((job) =>
+        job.minerals
+          .filter((m) => m.scuOutput > 0)
+          .map((m) => ({
+            key:         crypto.randomUUID(),
+            commodity:   m.mineral,
+            operation:   'sell' as const,
+            scu:         String(m.scuOutput),  // SCU OUTPUT (post-raffinazione)
+            pricePerScu: '',
+            totalManual: false,
+            totalPrice:  '',
+            autoPriced:  false
+          }))
+      )
+      setSellModal({
+        editTrade:     undefined,
+        initialHeader: { locationFrom: state.refineryLocation ?? '' },
+        initialRows:   prefillRows.length > 0 ? prefillRows : [emptyRow()],
+        source:        'refinery',
+        refineryJobs:  state.refineryJobs
+      })
       window.history.replaceState({}, '')
     }
   }, [location.state])
@@ -922,6 +1129,8 @@ export function TradesView() {
             editTrade={sellModal.editTrade}
             initialHeader={sellModal.initialHeader}
             initialRows={sellModal.initialRows}
+            source={sellModal.source}
+            refineryJobs={sellModal.refineryJobs}
           />
         )}
       </AnimatePresence>

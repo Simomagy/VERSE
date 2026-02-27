@@ -4,7 +4,7 @@
   "description": "VERSE - Companion App for Star Citizen",
   "main": "./out/main/index.js",
   "author": "Nebula Studios",
-  "homepage": "https://github.com/verse-app",
+  "homepage": "https://github.com/Simomagy/VERSE",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
@@ -17,6 +17,7 @@
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
+    "build:release": "npm run build && electron-builder --win --publish always",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux"
   },

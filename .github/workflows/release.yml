@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag version to release (e.g. v1.2.0)'
+        required: true
+
+jobs:
+  release-windows:
+    name: Build & Publish (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Compila TypeScript + Vite (renderer + main)
+      - name: Build app
+        run: npm run build
+
+      # Pacchettizza NSIS installer e pubblica su GitHub Releases
+      # Requires GH_TOKEN secret (Settings → Secrets → Actions)
+      # NOTE: per eliminare i warning SmartScreen su Windows, configura
+      # un certificato di code signing (CSC_LINK + CSC_KEY_PASSWORD) come secret.
+      - name: Package & Publish
+        run: npx electron-builder --win --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          # CSC_LINK: ${{ secrets.CSC_LINK }}
+          # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}

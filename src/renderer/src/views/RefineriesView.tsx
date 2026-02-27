@@ -807,17 +807,6 @@ function RefineryStats({ jobs }: { jobs: LocalRefineryJob[] }) {
   )
 }
 
-// ── Tipo sell-prefill condiviso con TradesView ────────────────────────────
-
-export interface SellPrefillRow {
-  key: string
-  commodity: string
-  operation: 'sell'
-  scu: string
-  pricePerScu: string
-  totalManual: boolean
-  totalPrice: string
-}
 
 // ── Main view ─────────────────────────────────────────────────────────────
 
@@ -842,29 +831,20 @@ export function RefineriesView() {
     setSelectedIds(selectAll ? new Set(jobs.map((j) => j.id)) : new Set())
   }
 
-  function buildSellRows(targetJobs: LocalRefineryJob[]): SellPrefillRow[] {
-    return targetJobs.flatMap((job) =>
-      job.minerals
-        .filter((m) => m.scuOutput > 0)
-        .map((m) => ({
-          key:        crypto.randomUUID(),
-          commodity:  m.mineral,
-          operation:  'sell' as const,
-          scu:        String(m.scuOutput),
-          pricePerScu: m.pricePerScu > 0 ? String(m.pricePerScu) : '',
-          totalManual: false,
-          totalPrice:  ''
-        }))
-    )
-  }
-
   function handleSellJob(job: LocalRefineryJob) {
-    navigate('/trades', { state: { prefillSell: buildSellRows([job]) } })
+    navigate('/trades', { state: { fromRefinery: true, refineryLocation: job.refinery, refineryJobs: [job] } })
   }
 
   function handleSellSelected() {
     const targets = jobs.filter((j) => selectedIds.has(j.id))
-    navigate('/trades', { state: { prefillSell: buildSellRows(targets) } })
+    const allSameRefinery = targets.every((j) => j.refinery === targets[0].refinery)
+    navigate('/trades', {
+      state: {
+        fromRefinery:     true,
+        refineryLocation: allSameRefinery ? targets[0].refinery : '',
+        refineryJobs:     targets
+      }
+    })
     setSelectedIds(new Set())
   }
 

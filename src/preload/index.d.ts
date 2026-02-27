@@ -128,11 +128,22 @@ interface AppAPI {
   checkApis: () => Promise<{ uex: boolean; wiki: boolean }>
 }
 
+interface UpdateInfo {
+  version: string
+}
+
+interface UpdaterAPI {
+  onUpdateAvailable:  (cb: (info: UpdateInfo) => void) => void
+  onUpdateDownloaded: (cb: (info: UpdateInfo) => void) => void
+  install: () => void
+}
+
 interface API {
   window: WindowAPI
   token: TokenAPI
   settings: SettingsAPI
   app: AppAPI
+  updater: UpdaterAPI
   fleet: FleetAPI
   trades: TradesAPI
   refineryJobs: RefineryJobsAPI

@@ -4,6 +4,7 @@ import { ShieldCheck, ExternalLink, AlertTriangle } from 'lucide-react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { useAuthStore } from '../../stores/auth.store'
+import wavyLines from '../../assets/wavy-lines.svg'
 
 const PANEL_VARIANTS = {
   initial: { opacity: 0, y: 24, scale: 0.97 },
@@ -48,6 +49,13 @@ export function Onboarding({ onComplete }: OnboardingProps) {
 
   return (
     <div className="fixed inset-0 z-[9990] flex items-center justify-center bg-hud-deep overflow-hidden">
+      {/* Sfondo decorativo */}
+      <img
+        src={wavyLines}
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none opacity-15"
+      />
+
       {/* Scanline */}
       <div className="absolute inset-0 hud-scanline pointer-events-none opacity-20" />
 

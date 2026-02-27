@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Download } from 'lucide-react'
 
 const API_CHECK_INTERVAL_MS = 60_000  // ri-ping ogni 60 s
 
@@ -48,6 +49,23 @@ function useAppInfo() {
   return { version, apiStatus }
 }
 
+function useUpdater() {
+  const [updateReady, setUpdateReady] = useState<{ version: string } | null>(null)
+
+  useEffect(() => {
+    if (typeof window.api?.updater?.onUpdateDownloaded !== 'function') return
+    window.api.updater.onUpdateDownloaded((info) => setUpdateReady(info))
+  }, [])
+
+  const install = () => {
+    if (typeof window.api?.updater?.install === 'function') {
+      window.api.updater.install()
+    }
+  }
+
+  return { updateReady, install }
+}
+
 function ApiDot({ label, status }: { label: string; status: ApiStatus }) {
   const cfg: Record<ApiStatus, { color: string; glow: string; text: string; pulse: boolean }> = {
     checking: { color: 'bg-hud-amber',  glow: '0 0 4px #e8a020', text: 'text-hud-amber',  pulse: true  },
@@ -69,6 +87,7 @@ function ApiDot({ label, status }: { label: string; status: ApiStatus }) {
 export function StatusBar() {
   const now = useClock()
   const { version, apiStatus } = useAppInfo()
+  const { updateReady, install } = useUpdater()
 
   const hh = now.getHours().toString().padStart(2, '0')
   const mm = now.getMinutes().toString().padStart(2, '0')
@@ -85,10 +104,23 @@ export function StatusBar() {
         <span className="hud-label text-hud-dim">BUILD {version}</span>
       </div>
 
-      {/* Centro: indicatori API reali */}
+      {/* Centro: indicatori API + badge aggiornamento */}
       <div className="flex items-center gap-4">
         <ApiDot label="UEX API"  status={apiStatus.uex}  />
         <ApiDot label="SC WIKI"  status={apiStatus.wiki} />
+
+        {updateReady && (
+          <button
+            onClick={install}
+            title={`v${updateReady.version} scaricato — clicca per installare e riavviare`}
+            className="flex items-center gap-1.5 px-2 py-0.5 border border-hud-green/60
+              bg-hud-green/10 text-hud-green hud-label animate-pulse
+              hover:bg-hud-green/20 hover:border-hud-green transition-colors"
+          >
+            <Download className="h-2.5 w-2.5" />
+            v{updateReady.version} READY
+          </button>
+        )}
       </div>
 
       {/* Destra: orologio */}

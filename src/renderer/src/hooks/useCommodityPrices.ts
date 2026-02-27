@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { uexClient } from '../api/uex.client'
 import type { CommodityPrice } from '../api/types'
 
@@ -14,7 +14,7 @@ export function useCommodityPrices() {
 
   const query = useQuery<CommodityPrice[]>({
     queryKey: PRICES_KEY,
-    queryFn: () => uexClient.get<CommodityPrice[]>('/items_prices_all'),
+    queryFn: () => uexClient.get<CommodityPrice[]>('/commodities_prices_all'),
     staleTime: STALE_TIME_MS,
     gcTime: 30 * 60 * 1000,
     retry: 1
@@ -58,8 +58,20 @@ export function useCommodityPrices() {
     [query.data]
   )
 
+  // Lista deduplicata e ordinata di terminal_name presenti nei dati prezzi.
+  // Usata come suggestions per i campi location nel form trade.
+  const terminalNames = useMemo(() => {
+    if (!query.data?.length) return []
+    const names = new Set<string>()
+    for (const p of query.data) {
+      if (p.terminal_name) names.add(p.terminal_name)
+    }
+    return [...names].sort()
+  }, [query.data])
+
   return {
     prices: query.data ?? [],
+    terminalNames,
     isLoading: query.isLoading,
     isFetching: query.isFetching,
     dataUpdatedAt: query.dataUpdatedAt,

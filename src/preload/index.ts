@@ -55,11 +55,20 @@ const appAPI = {
   checkApis: () => ipcRenderer.invoke('app:check-apis') as Promise<{ uex: boolean; wiki: boolean }>
 }
 
+const updaterAPI = {
+  onUpdateAvailable: (cb: (info: { version: string }) => void) =>
+    ipcRenderer.on('updater:update-available', (_evt, info) => cb(info)),
+  onUpdateDownloaded: (cb: (info: { version: string }) => void) =>
+    ipcRenderer.on('updater:update-downloaded', (_evt, info) => cb(info)),
+  install: () => ipcRenderer.send('updater:install')
+}
+
 const api = {
   window: windowAPI,
   token: tokenAPI,
   settings: settingsAPI,
   app: appAPI,
+  updater: updaterAPI,
   fleet: fleetAPI,
   trades: tradesAPI,
   refineryJobs: refineryJobsAPI,

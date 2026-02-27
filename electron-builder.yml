@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: verse
+appId: com.prysma.verse
+productName: VERSE
 directories:
   buildResources: build
 files:
@@ -13,6 +13,7 @@ asarUnpack:
   - resources/**
 win:
   executableName: verse
+  icon: build/icon.ico
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -39,5 +40,6 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  owner: Simomagy
+  repo: VERSE

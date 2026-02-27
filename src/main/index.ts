@@ -5,6 +5,7 @@ import { createSystemTray, destroyTray } from './tray'
 import { initHotkeys, unregisterGlobalHotkey } from './hotkeys'
 import { setupIpcHandlers } from './ipc'
 import { setupCorsHeaders } from './cors'
+import { setupAutoUpdater } from './updater'
 
 // Previeni istanze multiple
 const gotTheLock = app.requestSingleInstanceLock()
@@ -41,6 +42,9 @@ if (!gotTheLock) {
 
     // Create main window
     createMainWindow()
+
+    // Auto-updater: download silenzioso, notifica quando pronto
+    setupAutoUpdater()
 
     app.on('activate', function () {
       if (BrowserWindow.getAllWindows().length === 0) {

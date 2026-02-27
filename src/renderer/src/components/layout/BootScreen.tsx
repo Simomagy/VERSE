@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useStaticDataStore, type DatasetStatus } from '../../stores/static-data.store'
+import wavyLines from '../../assets/wavy-lines.svg'
 
 // ── Varianti locali ────────────────────────────────────────────────────────
 
@@ -78,6 +79,13 @@ export function BootScreen() {
 
   return (
     <div className="flex h-screen w-screen bg-hud-deep items-center justify-center overflow-hidden relative">
+      {/* Sfondo decorativo */}
+      <img
+        src={wavyLines}
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none opacity-20"
+      />
+
       {/* Scanline overlay */}
       <div className="absolute inset-0 hud-scanline pointer-events-none opacity-30" />
 
