@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+out/
+*.js
+*.js.map
+
+# Electron
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Cache
+.cache
+.eslintcache
+*.cache
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# Electron builder
+build/
+dist-electron/
+
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# TypeScript
+*.tsbuildinfo
+
+# Electron Store
+electron-store/
