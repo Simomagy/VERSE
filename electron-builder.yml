@@ -13,7 +13,7 @@ asarUnpack:
   - resources/**
 win:
   executableName: VERSE
-  icon: build/icon.ico
+  icon: resources/icon.ico
 nsis:
   artifactName: VERSE ${version} Setup.${ext}
   shortcutName: VERSE
@@ -21,8 +21,8 @@ nsis:
   createDesktopShortcut: always
   oneClick: false
   allowToChangeInstallationDirectory: true
-  installerIcon: build/icon.ico
-  installerHeaderIcon: build/icon.ico
+  installerIcon: resources/icon.ico
+  installerHeaderIcon: resources/icon.ico
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
