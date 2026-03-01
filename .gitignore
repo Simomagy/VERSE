@@ -7,6 +7,10 @@ out/
 *.js
 *.js.map
 
+# Eccezioni: config files che devono essere versionati
+!tailwind.config.js
+!postcss.config.js
+
 # Electron
 *.log
 *.pid
