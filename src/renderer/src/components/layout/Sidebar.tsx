@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { Ship, History, FlaskConical, Wallet, Settings } from 'lucide-react'
+import { Ship, History, FlaskConical, Wallet, Settings, Shield } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
 import logo from '@renderer/assets/logo.png'
 
@@ -45,6 +45,14 @@ const navItems: NavItemConfig[] = [
     accent: '#00e87a',
     iconActive: 'text-hud-green',
     bg: 'hover:bg-hud-green/5'
+  },
+  {
+    to: '/equipment',
+    icon: Shield,
+    label: 'EQUIPMENT',
+    accent: '#e8a020',
+    iconActive: 'text-hud-amber',
+    bg: 'hover:bg-hud-amber/5'
   }
 ]
 

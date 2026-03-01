@@ -125,6 +125,12 @@ interface WalletAPI {
   remove: (id: string) => Promise<{ success: boolean }>
 }
 
+interface ImageCacheAPI {
+  get: (normalizedName: string) => Promise<string | null>
+  set: (normalizedName: string, url: string) => Promise<{ success: boolean }>
+  clear: () => Promise<{ success: boolean }>
+}
+
 interface AppAPI {
   version: () => Promise<string>
   checkApis: () => Promise<{ uex: boolean; wiki: boolean }>
@@ -150,6 +156,7 @@ interface API {
   trades: TradesAPI
   refineryJobs: RefineryJobsAPI
   wallet: WalletAPI
+  imageCache: ImageCacheAPI
 }
 
 declare global {

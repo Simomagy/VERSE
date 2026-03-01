@@ -344,4 +344,47 @@
     -webkit-appearance: none;
     margin: 0;
   }
+
+  /* ── HUD Range Slider ──────────────────────────────────────────────── */
+  .hud-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 2px;
+    outline: none;
+    cursor: pointer;
+    border-radius: 0;
+    background: linear-gradient(
+      to right,
+      var(--slider-accent, #00e5ff) var(--slider-pct, 0%),
+      #1a2d42 var(--slider-pct, 0%)
+    );
+  }
+
+  .hud-slider::-webkit-slider-runnable-track {
+    height: 2px;
+    border-radius: 0;
+  }
+
+  .hud-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 0;
+    background: var(--slider-accent, #00e5ff);
+    border: none;
+    box-shadow: 0 0 8px var(--slider-accent, #00e5ff);
+    cursor: pointer;
+    margin-top: -4px;
+  }
+
+  .hud-slider:focus::-webkit-slider-thumb {
+    outline: 1px solid var(--slider-accent, #00e5ff);
+    outline-offset: 2px;
+  }
+
+  .hud-slider:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
 }

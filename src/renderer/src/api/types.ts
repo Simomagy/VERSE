@@ -275,6 +275,64 @@ export interface LocalTrade {
   source?: string // origine del trade: 'refinery' | undefined
 }
 
+// ─── Equipment ─────────────────────────────────────────────────────────────
+
+export type EquipmentCategory = 'armor' | 'clothing' | 'equipment'
+
+export type WikiItemCategory = 'fps-armor' | 'fps-clothing' | 'fps-equipment'
+
+export interface WikiItemQuery {
+  filterKey: 'filter[category]' | 'filter[type]'
+  filterValue: string
+}
+
+export interface WikiItemUexPrice {
+  terminal_id: number
+  terminal_name: string
+  price_buy: number
+  price_sell: number | null
+  date_updated: string
+}
+
+export interface WikiArmorItem {
+  uuid: string
+  name: string
+  classification: string | null
+  sub_type: string | null
+  size: number | null
+  grade: string | null
+  class: string | null
+  is_base_variant: boolean
+  description: {
+    en_EN: string
+    de_DE?: string
+    zh_CN?: string
+  }
+  manufacturer: {
+    name: string
+    code: string
+    uuid: string
+  } | null
+  clothing: {
+    slot: string
+    armor_type: string
+  } | null
+  uex_prices: WikiItemUexPrice[]
+  web_url: string
+  updated_at: string
+  version: string
+}
+
+export interface WikiArmorItemsResponse {
+  data: WikiArmorItem[]
+  meta: {
+    current_page: number
+    last_page: number
+    total: number
+    per_page: number
+  }
+}
+
 // ─── Star Citizen Wiki API types ───────────────────────────────────────────
 
 export interface WikiVehicle {

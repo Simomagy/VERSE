@@ -24,6 +24,8 @@ const queryClient = new QueryClient({
   }
 })
 
+const PERSIST_MAX_AGE_7D = 7 * 24 * 60 * 60 * 1000
+
 const persister = createSyncStoragePersister({
   storage: window.localStorage
 })
@@ -116,7 +118,7 @@ function App() {
   return (
     <PersistQueryClientProvider
       client={queryClient}
-      persistOptions={{ persister, dehydrateOptions: { shouldDehydrateQuery } }}
+      persistOptions={{ persister, maxAge: PERSIST_MAX_AGE_7D, dehydrateOptions: { shouldDehydrateQuery } }}
     >
       <HashRouter>
         <AppInit />

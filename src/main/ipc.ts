@@ -84,6 +84,7 @@ interface StoreSchema {
   trades: LocalTrade[]
   refineryJobs: LocalRefineryJob[]
   wallet: LocalWalletEntry[]
+  imageCache: Record<string, string>
 }
 
 const store = new Store<StoreSchema>({
@@ -99,7 +100,8 @@ const store = new Store<StoreSchema>({
     fleet: [],
     trades: [],
     refineryJobs: [],
-    wallet: []
+    wallet: [],
+    imageCache: {}
   }
 })
 
@@ -462,6 +464,25 @@ export function setupIpcHandlers(): void {
       'wallet',
       wallet.filter((e: LocalWalletEntry) => e.id !== id)
     )
+    return { success: true }
+  })
+
+  // ─── Image cache (Wiki thumbnails) ────────────────────────────────────
+
+  ipcMain.handle('imageCache:get', async (_, normalizedName: string) => {
+    const cache = store.get('imageCache', {})
+    const entry = cache[normalizedName]
+    return entry !== undefined ? entry : null
+  })
+
+  ipcMain.handle('imageCache:set', async (_, normalizedName: string, url: string) => {
+    const cache = store.get('imageCache', {})
+    store.set('imageCache', { ...cache, [normalizedName]: url })
+    return { success: true }
+  })
+
+  ipcMain.handle('imageCache:clear', async () => {
+    store.set('imageCache', {})
     return { success: true }
   })
 }

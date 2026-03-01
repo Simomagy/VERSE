@@ -50,6 +50,14 @@ const walletAPI = {
   remove: (id: string) => ipcRenderer.invoke('wallet:remove', id)
 }
 
+const imageCacheAPI = {
+  get: (normalizedName: string) =>
+    ipcRenderer.invoke('imageCache:get', normalizedName) as Promise<string | null>,
+  set: (normalizedName: string, url: string) =>
+    ipcRenderer.invoke('imageCache:set', normalizedName, url) as Promise<{ success: boolean }>,
+  clear: () => ipcRenderer.invoke('imageCache:clear') as Promise<{ success: boolean }>
+}
+
 const appAPI = {
   version: () => ipcRenderer.invoke('app:version') as Promise<string>,
   checkApis: () => ipcRenderer.invoke('app:check-apis') as Promise<{ uex: boolean; wiki: boolean }>
@@ -72,7 +80,8 @@ const api = {
   fleet: fleetAPI,
   trades: tradesAPI,
   refineryJobs: refineryJobsAPI,
-  wallet: walletAPI
+  wallet: walletAPI,
+  imageCache: imageCacheAPI
 }
 
 if (process.contextIsolated) {

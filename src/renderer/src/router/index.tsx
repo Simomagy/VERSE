@@ -5,6 +5,7 @@ import { TradesView } from '../views/TradesView'
 import { RefineriesView } from '../views/RefineriesView'
 import { WalletView } from '../views/WalletView'
 import { SettingsView } from '../views/SettingsView'
+import { EquipmentView } from '../views/EquipmentView'
 
 export function AppRouter() {
   return (
@@ -15,6 +16,7 @@ export function AppRouter() {
         <Route path="trades" element={<TradesView />} />
         <Route path="refinery" element={<RefineriesView />} />
         <Route path="wallet" element={<WalletView />} />
+        <Route path="equipment" element={<EquipmentView />} />
         <Route path="settings" element={<SettingsView />} />
         <Route path="*" element={<Navigate to="/fleet" replace />} />
       </Route>
