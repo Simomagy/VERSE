@@ -9,29 +9,13 @@ import { useSettingsStore } from './stores/settings.store'
 import { useStaticDataStore } from './stores/static-data.store'
 import { BootScreen } from './components/layout/BootScreen'
 import { Onboarding } from './components/layout/Onboarding'
+import { UpdateBanner } from './components/layout/UpdateBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 const BOOT_LINGER_MS = 1500
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 2,
-      staleTime: 1000 * 60 * 60, // 1 ora di default
-      gcTime: 1000 * 60 * 60 * 24 // 24 ore di cache persistence
-    }
-  }
-})
-
 const PERSIST_MAX_AGE_7D = 7 * 24 * 60 * 60 * 1000
 
-const persister = createSyncStoragePersister({
-  storage: window.localStorage
-})
-
 // Le query IPC-locali vivono in electron-store: non vanno duplicate in localStorage.
-// Escluderle riduce drasticamente il payload del restore al boot.
 const LOCAL_QUERY_PREFIXES = new Set(['wallet', 'trades', 'fleet', 'refinery'])
 
 function shouldDehydrateQuery(query: { queryKey: readonly unknown[] }): boolean {
@@ -39,7 +23,20 @@ function shouldDehydrateQuery(query: { queryKey: readonly unknown[] }): boolean 
   return !LOCAL_QUERY_PREFIXES.has(first)
 }
 
-function AppInit() {
+function createQueryClient(): QueryClient {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: 2,
+        staleTime: 1000 * 60 * 60,
+        gcTime: 1000 * 60 * 60 * 24
+      }
+    }
+  })
+}
+
+function AppInit({ queryClient }: { queryClient: QueryClient }) {
   const loadTokens = useAuthStore((state) => state.loadTokens)
   const isAppTokenSet = useAuthStore((state) => state.isAppTokenSet)
   const isLoading = useAuthStore((state) => state.isLoading)
@@ -53,7 +50,6 @@ function AppInit() {
     loadTokens()
     loadSettings()
 
-    // Pre-fetch delle query locali così sono in cache prima che l'utente navighi
     queryClient.prefetchQuery({
       queryKey: ['wallet', 'local'],
       queryFn: () => window.api.wallet.getAll(),
@@ -84,18 +80,14 @@ function AppInit() {
     return undefined
   }, [staticStatus])
 
-  // Onboarding: mostra solo dopo il boot, solo se il token non è impostato.
-  // isLoading=false garantisce che loadTokens sia terminato.
   const showOnboarding = bootDone && !isLoading && !isAppTokenSet && !onboardingDone
 
   return (
     <>
-      {/* App sempre montata — nessun unmount/remount al termine del boot */}
       <ErrorBoundary>
         <AppRouter />
       </ErrorBoundary>
 
-      {/* Boot screen come overlay fisso sopra l'app */}
       {!bootDone && (
         <div className="fixed inset-0 z-[9999]">
           <ErrorBoundary>
@@ -104,24 +96,32 @@ function AppInit() {
         </div>
       )}
 
-      {/* Onboarding primo avvio: appare dopo il boot se il token manca */}
       {showOnboarding && (
         <ErrorBoundary>
           <Onboarding onComplete={() => setOnboardingDone(true)} />
         </ErrorBoundary>
       )}
+
+      <UpdateBanner />
     </>
   )
 }
 
 function App() {
+  // Lazy init: evita che queryClient e persister vengano creati a livello modulo
+  // prima che il browser context (localStorage) sia garantito pronto.
+  const [queryClient] = useState(() => createQueryClient())
+  const [persister] = useState(() =>
+    createSyncStoragePersister({ storage: window.localStorage })
+  )
+
   return (
     <PersistQueryClientProvider
       client={queryClient}
       persistOptions={{ persister, maxAge: PERSIST_MAX_AGE_7D, dehydrateOptions: { shouldDehydrateQuery } }}
     >
       <HashRouter>
-        <AppInit />
+        <AppInit queryClient={queryClient} />
       </HashRouter>
     </PersistQueryClientProvider>
   )

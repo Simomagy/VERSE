@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Search, RefreshCw, X, ShoppingCart, ChevronLeft, ChevronRight, Package } from 'lucide-react'
+import { Shield, Search, RefreshCw, X, ShoppingCart, ChevronLeft, ChevronRight, Package, Heart } from 'lucide-react'
 import { BACKDROP_VARIANTS, MODAL_VARIANTS } from '../lib/animations'
 import { useQueryClient } from '@tanstack/react-query'
 import { Input } from '../components/ui/input'
@@ -611,16 +611,28 @@ export function EquipmentView() {
             </div>
           </div>
         </div>
-        <Button
-          variant="hud-ghost"
-          size="icon"
-          title="Clear image cache"
-          disabled={isClearing}
-          onClick={handleClearImageCache}
-          className="border-hud-border text-hud-muted hover:text-hud-text hover:border-hud-text/40"
-        >
-          <RefreshCw className={`h-3.5 w-3.5 ${isClearing ? 'animate-spin' : ''}`} />
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="group relative">
+            <Heart className="h-3.5 w-3.5 text-hud-dim hover:text-pink-400 transition-colors cursor-default" fill="currentColor" />
+            <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block pointer-events-none">
+              <div className="bg-hud-panel border border-hud-border px-2.5 py-1.5 whitespace-nowrap">
+                <p className="font-mono text-[0.6rem] tracking-widest text-hud-muted">
+                  Thanks to <span className="text-pink-400">Ther91</span> for the idea ♥
+                </p>
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="hud-ghost"
+            size="icon"
+            title="Clear image cache"
+            disabled={isClearing}
+            onClick={handleClearImageCache}
+            className="border-hud-border text-hud-muted hover:text-hud-text hover:border-hud-text/40"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isClearing ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
       </div>
 
       {/* Main tab bar */}

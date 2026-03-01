@@ -46,3 +46,4 @@ publish:
   provider: github
   owner: Simomagy
   repo: VERSE
+  releaseType: release

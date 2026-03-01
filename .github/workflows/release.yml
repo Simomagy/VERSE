@@ -30,14 +30,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Compila TypeScript + Vite (renderer + main)
-      - name: Build app
-        run: npm run build
+      # TypeScript typecheck separato: se fallisce il log è chiaro
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Build Vite (renderer + main) separato dal typecheck
+      - name: Build
+        run: npx electron-vite build
 
       # Pacchettizza NSIS installer e pubblica su GitHub Releases
-      # Requires GH_TOKEN secret (Settings → Secrets → Actions)
-      # NOTE: per eliminare i warning SmartScreen su Windows, configura
-      # un certificato di code signing (CSC_LINK + CSC_KEY_PASSWORD) come secret.
+      # GH_TOKEN viene da GITHUB_TOKEN automatico (Settings → Secrets → Actions)
+      # NOTE: per eliminare i warning SmartScreen configura il code signing:
+      # CSC_LINK + CSC_KEY_PASSWORD come secret nel repo.
       - name: Package & Publish
         run: npx electron-builder --win --publish always
         env:

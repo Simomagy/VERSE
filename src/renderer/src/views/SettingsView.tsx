@@ -95,7 +95,7 @@ function AppVersion() {
         .catch(() => setVersion('?'))
     }
   }, [])
-  return <p className="hud-label text-hud-dim mt-0.5">Version {version} · Electron + React</p>
+  return <p className="hud-label text-hud-dim mt-0.5">Version {version}</p>
 }
 
 // ── Main view ─────────────────────────────────────────────────────────────
@@ -161,7 +161,6 @@ export function SettingsView() {
               >
                 System Config
               </h1>
-              <p className="hud-label mt-0.5 text-hud-muted">VERSE — UEX Corp Companion</p>
             </div>
           </div>
         </div>
@@ -289,7 +288,7 @@ export function SettingsView() {
             <div className="font-mono text-xl font-black tracking-[0.3em] hud-text-cyan">VERSE</div>
             <div className="h-6 w-px bg-hud-border" />
             <div>
-              <p className="hud-label text-hud-text">UEX Corp Companion for Star Citizen</p>
+              <p className="hud-label text-hud-text">Built with ♥ by Prysma Studio</p>
               <AppVersion />
             </div>
           </div>

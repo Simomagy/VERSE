@@ -68,6 +68,10 @@ const updaterAPI = {
     ipcRenderer.on('updater:update-available', (_evt, info) => cb(info)),
   onUpdateDownloaded: (cb: (info: { version: string }) => void) =>
     ipcRenderer.on('updater:update-downloaded', (_evt, info) => cb(info)),
+  onDownloadProgress: (cb: (progress: { percent: number; bytesPerSecond: number; transferred: number; total: number }) => void) =>
+    ipcRenderer.on('updater:download-progress', (_evt, progress) => cb(progress)),
+  onError: (cb: (info: { message: string }) => void) =>
+    ipcRenderer.on('updater:error', (_evt, info) => cb(info)),
   install: () => ipcRenderer.send('updater:install')
 }
 

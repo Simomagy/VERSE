@@ -140,9 +140,18 @@ interface UpdateInfo {
   version: string
 }
 
+interface DownloadProgress {
+  percent: number
+  bytesPerSecond: number
+  transferred: number
+  total: number
+}
+
 interface UpdaterAPI {
   onUpdateAvailable: (cb: (info: UpdateInfo) => void) => void
   onUpdateDownloaded: (cb: (info: UpdateInfo) => void) => void
+  onDownloadProgress: (cb: (progress: DownloadProgress) => void) => void
+  onError: (cb: (info: { message: string }) => void) => void
   install: () => void
 }
 
