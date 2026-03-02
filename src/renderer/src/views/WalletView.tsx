@@ -13,8 +13,10 @@ import {
   Check,
   X as XIcon
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
+import { Select } from '../components/ui/select'
 import { Skeleton } from '../components/ui/skeleton'
 import { ContextMenu } from '../components/ui/context-menu'
 import { useConfirmDialog, SelectAllCheckbox } from '../components/ui/confirm-dialog'
@@ -30,12 +32,13 @@ import type { LocalWalletEntry, WalletEntryType } from '../api/types'
 
 // ── Costanti ──────────────────────────────────────────────────────────────
 
-const CATEGORIES = ['Trading', 'Mining', 'Refinery', 'Bounty', 'Salvage', 'Mission', 'Other']
+const CATEGORY_KEYS = ['Trading', 'Mining', 'Refinery', 'Bounty', 'Salvage', 'Mission', 'Other'] as const
+type CategoryKey = (typeof CATEGORY_KEYS)[number]
 
 const TYPE_CONFIG: Record<
   WalletEntryType,
   {
-    label: string
+    labelKey: string
     icon: React.ElementType
     color: string
     border: string
@@ -44,7 +47,7 @@ const TYPE_CONFIG: Record<
   }
 > = {
   income: {
-    label: 'INCOME',
+    labelKey: 'wallet.type.income',
     icon: TrendingUp,
     color: 'text-hud-green',
     border: 'border-hud-green/40',
@@ -52,7 +55,7 @@ const TYPE_CONFIG: Record<
     sign: '+'
   },
   expense: {
-    label: 'EXPENSE',
+    labelKey: 'wallet.type.expense',
     icon: TrendingDown,
     color: 'text-hud-red',
     border: 'border-hud-red/40',
@@ -60,7 +63,7 @@ const TYPE_CONFIG: Record<
     sign: '−'
   },
   adjustment: {
-    label: 'ADJUSTMENT',
+    labelKey: 'wallet.type.adjustment',
     icon: SlidersHorizontal,
     color: 'text-hud-amber',
     border: 'border-hud-amber/40',
@@ -86,6 +89,7 @@ const EMPTY_FORM: EntryFormData = {
 }
 
 function QuickAddForm() {
+  const { t } = useTranslation()
   const addEntry = useAddWalletEntry()
   const [form, setForm] = useState<EntryFormData>(EMPTY_FORM)
   const [open, setOpen] = useState(false)
@@ -123,7 +127,7 @@ function QuickAddForm() {
             onClick={() => setOpen(true)}
           >
             <Plus className="h-3.5 w-3.5 mr-1.5" />
-            ADD ENTRY
+            {t('wallet.addEntry')}
           </Button>
         </motion.div>
       ) : (
@@ -143,14 +147,14 @@ function QuickAddForm() {
         >
           {/* Tipo operazione */}
           <div className="grid grid-cols-3 gap-2">
-            {(Object.keys(TYPE_CONFIG) as WalletEntryType[]).map((t) => {
-              const cfg = TYPE_CONFIG[t]
-              const active = form.type === t
+            {(Object.keys(TYPE_CONFIG) as WalletEntryType[]).map((type) => {
+              const cfg = TYPE_CONFIG[type]
+              const active = form.type === type
               return (
                 <button
-                  key={t}
+                  key={type}
                   type="button"
-                  onClick={() => set('type', t)}
+                  onClick={() => set('type', type)}
                   className={`py-2 border font-mono text-xs tracking-widest uppercase transition-all duration-150 ${
                     active
                       ? `${cfg.border} ${cfg.bg} ${cfg.color}`
@@ -158,7 +162,7 @@ function QuickAddForm() {
                   }`}
                 >
                   <cfg.icon className="inline h-3 w-3 mr-1" />
-                  {cfg.label}
+                  {t(cfg.labelKey as Parameters<typeof t>[0])}
                 </button>
               )
             })}
@@ -168,7 +172,7 @@ function QuickAddForm() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="hud-label text-hud-muted mb-1.5 block">
-                AMOUNT (aUEC)<span className="text-hud-red ml-1">*</span>
+                {t('wallet.form.amount')}<span className="text-hud-red ml-1">*</span>
               </label>
               <Input
                 type="number"
@@ -180,27 +184,20 @@ function QuickAddForm() {
               />
             </div>
             <div>
-              <label className="hud-label text-hud-muted mb-1.5 block">CATEGORY</label>
-              <select
-                className="w-full h-9 border border-hud-border bg-hud-deep px-3 text-sm text-hud-text font-mono
-              focus:outline-none focus:border-hud-green transition-[border-color] duration-150"
+              <label className="hud-label text-hud-muted mb-1.5 block">{t('wallet.form.category')}</label>
+              <Select
                 value={form.category}
-                onChange={(e) => set('category', e.target.value)}
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(v) => set('category', v)}
+                options={CATEGORY_KEYS.map((c) => ({ value: c, label: t(`wallet.category.${c.toLowerCase()}` as Parameters<typeof t>[0]) }))}
+              />
             </div>
           </div>
 
           {/* Descrizione */}
           <div>
-            <label className="hud-label text-hud-muted mb-1.5 block">DESCRIPTION</label>
+            <label className="hud-label text-hud-muted mb-1.5 block">{t('wallet.form.description')}</label>
             <Input
-              placeholder="e.g. Laranite run Shubin → TDD..."
+              placeholder={t('wallet.form.descriptionPlaceholder')}
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && isValid && handleSubmit()}
@@ -211,7 +208,7 @@ function QuickAddForm() {
           {isValid && (
             <p className={`hud-label ${TYPE_CONFIG[form.type].color}`}>
               {TYPE_CONFIG[form.type].sign} {formatUEC(parseFloat(form.amount))} aUEC
-              {form.type === 'adjustment' && ' (balance reset)'}
+              {form.type === 'adjustment' && t('wallet.type.adjustmentReset')}
             </p>
           )}
 
@@ -225,7 +222,7 @@ function QuickAddForm() {
                 setForm(EMPTY_FORM)
               }}
             >
-              CANCEL
+              {t('wallet.form.cancel')}
             </Button>
             <Button
               variant="hud"
@@ -234,7 +231,7 @@ function QuickAddForm() {
               disabled={!isValid || addEntry.isPending}
               onClick={handleSubmit}
             >
-              {addEntry.isPending ? 'SAVING...' : 'CONFIRM'}
+              {addEntry.isPending ? t('wallet.form.saving') : t('wallet.form.confirm')}
             </Button>
           </div>
         </motion.div>
@@ -256,6 +253,7 @@ function EntryRow({
   onSelect: () => void
   onRemove: () => void
 }) {
+  const { t } = useTranslation()
   const updateEntry = useUpdateWalletEntry()
   const cfg = TYPE_CONFIG[entry.type]
   const Icon = cfg.icon
@@ -294,11 +292,11 @@ function EntryRow({
 
   const menuItems = [
     ...(!isAuto
-      ? [{ label: 'Edit Entry', icon: <Pencil className="h-3 w-3" />, onClick: openEdit }]
+      ? [{ label: t('wallet.menu.edit'), icon: <Pencil className="h-3 w-3" />, onClick: openEdit }]
       : []),
     { separator: true as const },
     {
-      label: 'Remove',
+      label: t('wallet.menu.remove'),
       icon: <Trash2 className="h-3 w-3" />,
       variant: 'danger' as const,
       onClick: onRemove,
@@ -311,21 +309,21 @@ function EntryRow({
     return (
       <div className="border-b border-hud-border/40 px-4 py-3 space-y-2 bg-hud-panel/60">
         <div className="grid grid-cols-3 gap-1.5">
-          {(Object.keys(TYPE_CONFIG) as WalletEntryType[]).map((t) => {
-            const c = TYPE_CONFIG[t]
-            const active = draft.type === t
+          {(Object.keys(TYPE_CONFIG) as WalletEntryType[]).map((type) => {
+            const c = TYPE_CONFIG[type]
+            const active = draft.type === type
             return (
               <button
-                key={t}
+                key={type}
                 type="button"
-                onClick={() => setDraft((d) => ({ ...d, type: t }))}
+                onClick={() => setDraft((d) => ({ ...d, type }))}
                 className={`py-1.5 border font-mono text-[10px] tracking-widest uppercase transition-all duration-150 ${
                   active
                     ? `${c.border} ${c.bg} ${c.color}`
                     : 'border-hud-border text-hud-muted hover:border-hud-border-glow hover:text-hud-text'
                 }`}
               >
-                {c.label}
+                {t(c.labelKey as Parameters<typeof t>[0])}
               </button>
             )
           })}
@@ -344,21 +342,14 @@ function EntryRow({
               aUEC
             </span>
           </div>
-          <select
-            className="h-9 border border-hud-border bg-hud-deep px-3 text-sm text-hud-text font-mono
-            focus:outline-none focus:border-hud-cyan transition-[border-color] duration-150"
+          <Select
             value={draft.category}
-            onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))}
-          >
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
+            onValueChange={(v) => setDraft((d) => ({ ...d, category: v }))}
+            options={CATEGORY_KEYS.map((c) => ({ value: c, label: t(`wallet.category.${c.toLowerCase()}` as Parameters<typeof t>[0]) }))}
+          />
         </div>
         <Input
-          placeholder="Description..."
+          placeholder={t('wallet.form.descriptionPlaceholder')}
           value={draft.description}
           onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
           onKeyDown={(e) => {
@@ -376,14 +367,14 @@ function EntryRow({
             onClick={() => setEditing(false)}
             className="flex items-center gap-1 px-2 py-1 hud-label text-hud-muted border border-hud-border hover:text-hud-text hover:border-hud-border-glow transition-all"
           >
-            <XIcon className="h-3 w-3" /> CANCEL
+            <XIcon className="h-3 w-3" /> {t('wallet.row.cancel')}
           </button>
           <button
             onClick={confirmEdit}
             disabled={updateEntry.isPending || (parseFloat(draft.amount) || 0) <= 0}
             className="flex items-center gap-1 px-2 py-1 hud-label text-hud-green border border-hud-green/40 hover:bg-hud-green/10 hover:border-hud-green disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
-            <Check className="h-3 w-3" /> {updateEntry.isPending ? 'SAVING...' : 'CONFIRM'}
+            <Check className="h-3 w-3" /> {updateEntry.isPending ? t('wallet.row.saving') : t('wallet.row.confirm')}
           </button>
         </div>
       </div>
@@ -430,7 +421,7 @@ function EntryRow({
         ${isAuto ? 'border-hud-amber/30 bg-hud-amber/5 text-hud-amber/70' : 'invisible'}`}
         >
           <ArrowLeftRight className="h-2.5 w-2.5" />
-          TRADE
+          {t('wallet.row.trade')}
         </span>
 
         {/* Data */}
@@ -461,10 +452,10 @@ function EntryRow({
           </button>
           {/* Remove */}
           {isAuto ? (
-            <span
-              title="Managed automatically by trades"
-              className="flex items-center justify-center w-7 h-7 border border-hud-border/30 text-hud-border cursor-not-allowed"
-            >
+          <span
+            title={t('wallet.row.managedByTrades')}
+            className="flex items-center justify-center w-7 h-7 border border-hud-border/30 text-hud-border cursor-not-allowed"
+          >
               <Trash2 className="h-3 w-3" />
             </span>
           ) : (
@@ -487,6 +478,7 @@ function EntryRow({
 // ── Stats panel ───────────────────────────────────────────────────────────
 
 function WalletStats({ entries, balance }: { entries: LocalWalletEntry[]; balance: number }) {
+  const { t } = useTranslation()
   const stats = useMemo(() => {
     const income = entries.filter((e) => e.type === 'income').reduce((a, e) => a + e.amount, 0)
     const expense = entries.filter((e) => e.type === 'expense').reduce((a, e) => a + e.amount, 0)
@@ -496,17 +488,17 @@ function WalletStats({ entries, balance }: { entries: LocalWalletEntry[]; balanc
   return (
     <div className="grid grid-cols-3 gap-2">
       <div className="hud-panel p-3">
-        <p className="hud-label text-hud-muted">TOTAL INCOME</p>
+        <p className="hud-label text-hud-muted">{t('wallet.stats.totalIncome')}</p>
         <p className="font-mono text-lg font-bold mt-1 text-hud-green">{formatUEC(stats.income)}</p>
         <p className="hud-label text-hud-dim">aUEC</p>
       </div>
       <div className="hud-panel p-3">
-        <p className="hud-label text-hud-muted">TOTAL EXPENSES</p>
+        <p className="hud-label text-hud-muted">{t('wallet.stats.totalExpenses')}</p>
         <p className="font-mono text-lg font-bold mt-1 text-hud-red">{formatUEC(stats.expense)}</p>
         <p className="hud-label text-hud-dim">aUEC</p>
       </div>
       <div className="hud-panel p-3">
-        <p className="hud-label text-hud-muted">CURRENT BALANCE</p>
+        <p className="hud-label text-hud-muted">{t('wallet.stats.balance')}</p>
         <p
           className={`font-mono text-lg font-bold mt-1 ${balance >= 0 ? 'text-hud-cyan' : 'text-hud-red'}`}
         >
@@ -523,6 +515,7 @@ function WalletStats({ entries, balance }: { entries: LocalWalletEntry[]; balanc
 type FilterType = 'all' | WalletEntryType | 'trade'
 
 export function WalletView() {
+  const { t } = useTranslation()
   const { data: entries = [], isLoading } = useWalletEntries()
   const removeEntry = useRemoveWalletEntry()
   const { confirm, dialog } = useConfirmDialog()
@@ -559,8 +552,11 @@ export function WalletView() {
   function handleBulkDelete() {
     confirm(
       {
-        title: 'Delete Entries',
-        message: `Delete ${deletableCount} wallet entr${deletableCount === 1 ? 'y' : 'ies'}? This cannot be undone.`
+        title: t('wallet.confirm.deleteTitle'),
+        message: t('wallet.confirm.deleteMessage', {
+          count: deletableCount,
+          y: deletableCount === 1 ? 'y' : 'ies'
+        })
       },
       () => {
         ;[...selectedIds]
@@ -574,19 +570,22 @@ export function WalletView() {
   function askRemoveEntry(entry: LocalWalletEntry) {
     confirm(
       {
-        title: 'Remove Entry',
-        message: `Remove "${entry.description || entry.type}" (${formatUEC(entry.amount)})?`
+        title: t('wallet.confirm.removeTitle'),
+        message: t('wallet.confirm.removeMessage', {
+          description: entry.description || entry.type,
+          amount: formatUEC(entry.amount)
+        })
       },
       () => removeEntry.mutate(entry.id)
     )
   }
 
   const FILTERS: { id: FilterType; label: string }[] = [
-    { id: 'all', label: 'ALL' },
-    { id: 'income', label: 'INCOME' },
-    { id: 'expense', label: 'EXPENSE' },
-    { id: 'adjustment', label: 'ADJUSTMENT' },
-    { id: 'trade', label: 'TRADE' }
+    { id: 'all', label: t('wallet.filter.all') },
+    { id: 'income', label: t('wallet.filter.income') },
+    { id: 'expense', label: t('wallet.filter.expense') },
+    { id: 'adjustment', label: t('wallet.filter.adjustment') },
+    { id: 'trade', label: t('wallet.filter.trade') }
   ]
 
   return (
@@ -600,9 +599,9 @@ export function WalletView() {
               className="font-mono text-sm font-bold tracking-[0.15em] text-hud-green uppercase"
               style={{ textShadow: '0 0 8px rgba(0,232,122,0.4)' }}
             >
-              Wallet
+              {t('wallet.title')}
             </h1>
-            <p className="hud-label mt-0.5 text-hud-muted">{entries.length} ENTRIES LOGGED</p>
+            <p className="hud-label mt-0.5 text-hud-muted">{t('wallet.entriesLogged', { count: entries.length })}</p>
           </div>
         </div>
         <QuickAddForm />
@@ -640,10 +639,10 @@ export function WalletView() {
           accentColor="hud-green"
         />
         <span className="hud-label" />
-        <span className="hud-label">DESCRIPTION / CATEGORY</span>
-        <span className="hud-label">SOURCE</span>
-        <span className="hud-label text-right">WHEN</span>
-        <span className="hud-label text-right">AMOUNT</span>
+        <span className="hud-label">{t('wallet.col.description')}</span>
+        <span className="hud-label">{t('wallet.col.source')}</span>
+        <span className="hud-label text-right">{t('wallet.col.when')}</span>
+        <span className="hud-label text-right">{t('wallet.col.amount')}</span>
         <span />
       </div>
       <hr className="hud-divider" />
@@ -660,11 +659,11 @@ export function WalletView() {
           <div className="border border-hud-green/20 bg-hud-green/5 p-8">
             <Wallet className="h-12 w-12 text-hud-green/40 mx-auto mb-3 drop-shadow-[0_0_8px_rgba(0,232,122,0.3)]" />
             <p className="hud-label text-hud-green text-center">
-              {entries.length === 0 ? 'NO ENTRIES LOGGED' : 'NO ENTRIES WITH THIS FILTER'}
+              {entries.length === 0 ? t('wallet.noEntries') : t('wallet.noEntriesFilter')}
             </p>
             {entries.length === 0 && (
               <p className="hud-label text-hud-dim text-center mt-1">
-                Use ADD ENTRY to record income, expenses or balance snapshots
+                {t('wallet.noEntriesHint')}
               </p>
             )}
           </div>
@@ -706,8 +705,10 @@ export function WalletView() {
               shadow-[0_4px_24px_rgba(0,0,0,0.7)]"
           >
             <Trash2 className="h-3.5 w-3.5" />
-            DELETE {deletableCount > 0 ? deletableCount : selectedIds.size} ENTR
-            {deletableCount === 1 ? 'Y' : 'IES'}
+            {t('wallet.bulk.delete', {
+              count: deletableCount > 0 ? deletableCount : selectedIds.size,
+              y: deletableCount === 1 ? 'Y' : 'IES'
+            })}
             <button
               onClick={(e) => {
                 e.stopPropagation()

@@ -11,6 +11,7 @@ import { BootScreen } from './components/layout/BootScreen'
 import { Onboarding } from './components/layout/Onboarding'
 import { UpdateBanner } from './components/layout/UpdateBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import i18n from './i18n'
 
 const BOOT_LINGER_MS = 1500
 const PERSIST_MAX_AGE_7D = 7 * 24 * 60 * 60 * 1000
@@ -41,10 +42,17 @@ function AppInit({ queryClient }: { queryClient: QueryClient }) {
   const isAppTokenSet = useAuthStore((state) => state.isAppTokenSet)
   const isLoading = useAuthStore((state) => state.isLoading)
   const loadSettings = useSettingsStore((state) => state.loadSettings)
+  const language = useSettingsStore((state) => state.language)
   const staticStatus = useStaticDataStore((state) => state.status)
 
   const [bootDone, setBootDone] = useState(false)
   const [onboardingDone, setOnboardingDone] = useState(false)
+
+  useEffect(() => {
+    if (language) {
+      i18n.changeLanguage(language)
+    }
+  }, [language])
 
   useEffect(() => {
     loadTokens()

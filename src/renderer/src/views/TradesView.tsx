@@ -15,9 +15,11 @@ import {
   Pencil,
   RefreshCw
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useCommodityPrices } from '../hooks/useCommodityPrices'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
+import { Select } from '../components/ui/select'
 import { Skeleton } from '../components/ui/skeleton'
 import { ComboInput } from '../components/ui/combo-input'
 import { useLocalFleet } from '../hooks/useFleet'
@@ -98,11 +100,12 @@ function ItemsTable({
   onAdd: () => void
   onRemove: (key: string) => void
 }) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-1">
       {/* Header */}
       <div className="grid grid-cols-[5rem_1fr_4.5rem_5.5rem_6rem_2rem] gap-2 px-1 pb-1">
-        {['OP', 'COMMODITY', 'SCU', 'PRICE/SCU', 'TOTAL', ''].map((h) => (
+        {[t('trades.items.op'), t('trades.items.commodity'), t('trades.items.scu'), t('trades.items.pricePerScu'), t('trades.items.total'), ''].map((h) => (
           <span key={h} className="hud-label text-hud-dim text-right first:text-left">
             {h}
           </span>
@@ -164,7 +167,7 @@ function ItemsTable({
             <div className="relative">
               {row.autoPriced && (
                 <span
-                  title="Auto-filled from UEX prices"
+                  title={t('trades.items.autoFilledUex')}
                   className="absolute left-1.5 top-1/2 -translate-y-1/2 text-[9px] font-mono
                     text-hud-cyan/70 pointer-events-none select-none leading-none z-10"
                 >
@@ -194,7 +197,7 @@ function ItemsTable({
               />
               <button
                 type="button"
-                title={row.totalManual ? 'Switch to auto' : 'Enter manually'}
+                  title={row.totalManual ? t('trades.items.switchToAuto') : t('trades.items.enterManually')}
                 className={[
                   'absolute right-1 top-1/2 -translate-y-1/2',
                   'flex items-center justify-center w-4 h-4 text-[7px] font-bold font-mono border',
@@ -235,7 +238,7 @@ function ItemsTable({
           transition-colors py-1"
       >
         <Plus className="h-3 w-3" />
-        ADD COMMODITY
+        {t('trades.items.addCommodity')}
       </button>
     </div>
   )
@@ -250,6 +253,7 @@ function ModalSidePanel({
   rows: ItemRow[]
   refineryJobs?: LocalRefineryJob[]
 }) {
+  const { t } = useTranslation()
   const fScu = (n: number | string) => {
     const v = typeof n === 'string' ? parseFloat(n) || 0 : n
     return v === 0 ? '0' : v % 1 === 0 ? String(v) : v.toFixed(2)
@@ -305,7 +309,7 @@ function ModalSidePanel({
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-hud-border shrink-0">
         <span className="w-1.5 h-1.5 bg-hud-amber shrink-0" />
-        <span className="hud-label text-hud-amber tracking-widest">SUMMARY</span>
+        <span className="hud-label text-hud-amber tracking-widest">{t('trades.summary.title')}</span>
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hud">
@@ -357,13 +361,13 @@ function ModalSidePanel({
             {refTotals && refineryJobs.length > 1 && (
               <div className="pt-2 border-t border-hud-border/40 space-y-0.5">
                 <div className="flex justify-between">
-                  <span className="hud-label text-hud-muted">estimated</span>
+                  <span className="hud-label text-hud-muted">{t('trades.summary.estimated')}</span>
                   <span className="font-mono text-xs text-hud-text">
                     {formatUEC(refTotals.estimated)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="hud-label text-hud-muted">cost</span>
+                  <span className="hud-label text-hud-muted">{t('trades.summary.cost')}</span>
                   <span className="font-mono text-xs text-hud-amber">
                     {formatUEC(refTotals.cost)}
                   </span>
@@ -375,19 +379,17 @@ function ModalSidePanel({
 
         {/* ── Trade recap live ── */}
         <div className="p-3 space-y-2.5">
-          <span className="hud-label text-hud-amber">TRADE RECAP</span>
+          <span className="hud-label text-hud-amber">{t('trades.summary.tradeRecap')}</span>
 
           {filledRows.length === 0 ? (
             <p className="hud-label text-hud-dim py-3 text-center leading-relaxed">
-              Fill in commodities
-              <br />
-              to see the recap
+              {t('trades.summary.fillCommodities')}
             </p>
           ) : (
             <>
               {buyRows.length > 0 && (
                 <div>
-                  <div className="hud-label text-hud-green mb-1">↓ BUY</div>
+                  <div className="hud-label text-hud-green mb-1">↓ {t('trades.summary.buy')}</div>
                   {buyRows.map((r) => (
                     <ItemLine key={r.key} r={r} color="text-hud-green" />
                   ))}
@@ -395,7 +397,7 @@ function ModalSidePanel({
               )}
               {sellRows.length > 0 && (
                 <div>
-                  <div className="hud-label text-hud-cyan mb-1">↑ SELL</div>
+                  <div className="hud-label text-hud-cyan mb-1">↑ {t('trades.summary.sell')}</div>
                   {sellRows.map((r) => (
                     <ItemLine key={r.key} r={r} color="text-hud-cyan" />
                   ))}
@@ -409,19 +411,19 @@ function ModalSidePanel({
       {/* Totali trade footer */}
       <div className="shrink-0 p-3 border-t border-hud-border space-y-1">
         <div className="flex justify-between">
-          <span className="hud-label text-hud-muted">BUY</span>
+          <span className="hud-label text-hud-muted">{t('trades.summary.buy')}</span>
           <span className="font-mono text-xs text-hud-green">
             {tradeTotals.buy > 0 ? formatUEC(tradeTotals.buy) : '—'}
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="hud-label text-hud-muted">SELL</span>
+          <span className="hud-label text-hud-muted">{t('trades.summary.sell')}</span>
           <span className="font-mono text-xs text-hud-cyan">
             {tradeTotals.sell > 0 ? formatUEC(tradeTotals.sell) : '—'}
           </span>
         </div>
         <div className="flex justify-between pt-1 border-t border-hud-border/40">
-          <span className="hud-label text-hud-muted font-bold">NET</span>
+          <span className="hud-label text-hud-muted font-bold">{t('trades.summary.net2')}</span>
           <span
             className={`font-mono text-xs font-bold ${
               tradeTotals.net > 0
@@ -469,6 +471,7 @@ function AddTradeModal({
   source,
   refineryJobs
 }: AddTradeModalProps) {
+  const { t } = useTranslation()
   const { data: fleet = [] } = useLocalFleet()
   const addTrade = useAddTrade()
   const updateTrade = useUpdateTrade()
@@ -663,14 +666,14 @@ function AddTradeModal({
           <div className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 bg-hud-amber" />
             <span className="hud-label text-hud-text tracking-widest">
-              {editTrade ? 'EDIT TRADE RUN' : 'LOG TRADE RUN'}
+              {editTrade ? t('trades.modal.titleEdit') : t('trades.modal.titleLog')}
             </span>
             {/* Refresh prezzi UEX */}
             <button
               type="button"
               onClick={refreshPrices}
               disabled={cooldown > 0 || pricesFetching}
-              title={cooldown > 0 ? `Refresh available in ${cooldown}s` : 'Refresh UEX prices'}
+                  title={cooldown > 0 ? t('trades.row.refreshIn', { s: cooldown }) : 'Refresh UEX prices'}
               className={[
                 'flex items-center gap-1 px-1.5 py-0.5 border text-[9px] font-mono font-bold',
                 'tracking-wider transition-all duration-150',
@@ -682,7 +685,7 @@ function AddTradeModal({
               <RefreshCw
                 className={['h-2.5 w-2.5', pricesFetching ? 'animate-spin' : ''].join(' ')}
               />
-              {cooldown > 0 ? `${cooldown}s` : 'PRICES'}
+              {cooldown > 0 ? t('trades.row.refreshIn', { s: cooldown }) : t('trades.row.pricesRefresh')}
             </button>
           </div>
           <button
@@ -698,7 +701,7 @@ function AddTradeModal({
           <div className="flex-1 min-w-0 overflow-y-auto scrollbar-hud p-5 space-y-5">
             {/* ── Header route ── */}
             <div className="grid grid-cols-2 gap-3">
-              <Field label="FROM" required>
+              <Field label={t('trades.modal.from')} required>
                 <ComboInput
                   value={header.locationFrom}
                   onChange={(v) => setHeaderField('locationFrom', v)}
@@ -706,7 +709,7 @@ function AddTradeModal({
                   placeholder="e.g. Lorville"
                 />
               </Field>
-              <Field label="TO" required={hasSellItems}>
+              <Field label={t('trades.modal.to')} required={hasSellItems}>
                 <ComboInput
                   value={header.locationTo}
                   onChange={(v) => setHeaderField('locationTo', v)}
@@ -716,29 +719,21 @@ function AddTradeModal({
               </Field>
             </div>
 
-            <Field label="VESSEL">
-              <select
-                className="w-full h-9 border border-hud-border bg-hud-deep px-3 text-sm text-hud-text font-mono
-                focus:outline-none focus:border-hud-amber focus:shadow-[0_0_0_1px_rgba(232,160,32,0.2)]
-                transition-[border-color,box-shadow] duration-150"
+            <Field label={t('trades.modal.vessel')}>
+              <Select
                 value={header.shipId}
-                onChange={(e) => setHeaderField('shipId', e.target.value)}
-              >
-                <option value="">— None / Unspecified —</option>
-                {fleet.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.nickname || s.wikiName}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(v) => setHeaderField('shipId', v)}
+                placeholder={t('trades.modal.vesselNone')}
+                options={fleet.map((s) => ({ value: s.id, label: s.nickname || s.wikiName }))}
+              />
             </Field>
 
             {/* ── Commodities table ── */}
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="hud-label text-hud-muted">COMMODITIES</span>
+                <span className="hud-label text-hud-muted">{t('trades.modal.commodities')}</span>
                 <div className="flex-1 h-px bg-hud-border" />
-                <span className="hud-label text-hud-dim">Click OP to toggle BUY/SELL</span>
+                <span className="hud-label text-hud-dim">{t('trades.modal.clickToToggle')}</span>
               </div>
               <ItemsTable
                 rows={rows}
@@ -753,15 +748,15 @@ function AddTradeModal({
             {(totals.buy > 0 || totals.sell > 0) && (
               <div className="grid grid-cols-3 gap-2 pt-1 border-t border-hud-border">
                 <div className="hud-panel p-2 text-center">
-                  <p className="hud-label text-hud-dim">TOTAL BUY</p>
+                  <p className="hud-label text-hud-dim">{t('trades.modal.totalBuy')}</p>
                   <p className="font-mono text-sm text-hud-green">{formatUEC(totals.buy)}</p>
                 </div>
                 <div className="hud-panel p-2 text-center">
-                  <p className="hud-label text-hud-dim">TOTAL SELL</p>
+                  <p className="hud-label text-hud-dim">{t('trades.modal.totalSell')}</p>
                   <p className="font-mono text-sm text-hud-cyan">{formatUEC(totals.sell)}</p>
                 </div>
                 <div className="hud-panel p-2 text-center">
-                  <p className="hud-label text-hud-dim">NET PROFIT</p>
+                  <p className="hud-label text-hud-dim">{t('trades.modal.netProfit')}</p>
                   <p
                     className={`font-mono text-sm font-bold ${totals.profit >= 0 ? 'text-hud-cyan' : 'text-hud-red'}`}
                   >
@@ -772,9 +767,9 @@ function AddTradeModal({
               </div>
             )}
 
-            <Field label="NOTES">
+            <Field label={t('common.notes')}>
               <Input
-                placeholder="Optional..."
+                placeholder={t('common.optional')}
                 value={header.notes}
                 onChange={(e) => setHeaderField('notes', e.target.value)}
               />
@@ -789,7 +784,7 @@ function AddTradeModal({
         {/* Footer modal */}
         <div className="flex gap-2 px-5 py-3 border-t border-hud-border shrink-0">
           <Button variant="hud-ghost" className="flex-1" onClick={onClose}>
-            CANCEL
+            {t('trades.modal.cancel')}
           </Button>
           <Button
             variant="hud"
@@ -797,7 +792,7 @@ function AddTradeModal({
             onClick={handleSubmit}
             disabled={!isValid || isPending}
           >
-            {isPending ? 'SAVING...' : editTrade ? 'UPDATE RUN' : 'LOG TRADE RUN'}
+            {isPending ? t('trades.modal.saving') : editTrade ? t('trades.modal.updateRun') : t('trades.modal.logRun')}
           </Button>
         </div>
       </motion.div>
@@ -822,17 +817,18 @@ function TradeRow({
   onRemove: () => void
   onCreateSell: () => void
 }) {
+  const { t } = useTranslation()
   const buyItems = trade.items.filter((i) => i.operation === 'buy')
   const sellItems = trade.items.filter((i) => i.operation === 'sell')
   const hasProfit = trade.netProfit >= 0
   const hasBuyOnly = buyItems.length > 0 && sellItems.length === 0
 
   const menuItems = [
-    { label: 'Edit Trade Run', icon: <Pencil className="h-3 w-3" />, onClick: onEdit },
+    { label: t('trades.menu.edit'), icon: <Pencil className="h-3 w-3" />, onClick: onEdit },
     ...(hasBuyOnly
       ? [
           {
-            label: 'Create Sell Run',
+            label: t('trades.menu.createSell'),
             icon: <CopyPlus className="h-3 w-3" />,
             onClick: onCreateSell
           }
@@ -840,7 +836,7 @@ function TradeRow({
       : []),
     { separator: true as const },
     {
-      label: 'Remove',
+      label: t('trades.menu.remove'),
       icon: <Trash2 className="h-3 w-3" />,
       variant: 'danger' as const,
       onClick: onRemove
@@ -926,7 +922,7 @@ function TradeRow({
             {trade.totalBuy > 0 ? (
               <>
                 <p className="font-mono text-xs text-hud-green">{formatUEC(trade.totalBuy)}</p>
-                <p className="hud-label text-hud-dim">BUY</p>
+                <p className="hud-label text-hud-dim">{t('trades.col.buy')}</p>
               </>
             ) : (
               <span className="hud-label text-hud-dim">—</span>
@@ -938,7 +934,7 @@ function TradeRow({
             {trade.totalSell > 0 ? (
               <>
                 <p className="font-mono text-xs text-hud-cyan">{formatUEC(trade.totalSell)}</p>
-                <p className="hud-label text-hud-dim">SELL</p>
+                <p className="hud-label text-hud-dim">{t('trades.col.sell')}</p>
               </>
             ) : (
               <span className="hud-label text-hud-dim">—</span>
@@ -966,7 +962,7 @@ function TradeRow({
                 transition-all duration-150 hud-label"
               >
                 <CopyPlus className="h-3 w-3" />
-                SELL
+                {t('trades.row.createSell')}
               </button>
             )}
             <button
@@ -997,23 +993,24 @@ function TradeRow({
 // ── Stats panel ───────────────────────────────────────────────────────────
 
 function TradeStats({ trades }: { trades: LocalTrade[] }) {
+  const { t } = useTranslation()
   const stats = useMemo(() => {
-    const revenue = trades.reduce((a, t) => a + t.totalSell, 0)
-    const cost = trades.reduce((a, t) => a + t.totalBuy, 0)
-    const scu = trades.reduce((a, t) => a + t.items.reduce((b, i) => b + i.scu, 0), 0)
+    const revenue = trades.reduce((a, tr) => a + tr.totalSell, 0)
+    const cost = trades.reduce((a, tr) => a + tr.totalBuy, 0)
+    const scu = trades.reduce((a, tr) => a + tr.items.reduce((b, i) => b + i.scu, 0), 0)
     return { revenue, cost, profit: revenue - cost, scu }
   }, [trades])
 
   const items = [
-    { label: 'REVENUE', value: formatUEC(stats.revenue), unit: 'aUEC', color: 'text-hud-cyan' },
-    { label: 'COSTS', value: formatUEC(stats.cost), unit: 'aUEC', color: 'text-hud-green' },
+    { label: t('trades.stats.revenue'), value: formatUEC(stats.revenue), unit: 'aUEC', color: 'text-hud-cyan' },
+    { label: t('trades.stats.costs'), value: formatUEC(stats.cost), unit: 'aUEC', color: 'text-hud-green' },
     {
-      label: 'NET PROFIT',
+      label: t('trades.stats.netProfit'),
       value: formatUEC(stats.profit),
       unit: 'aUEC',
       color: stats.profit >= 0 ? 'text-hud-cyan' : 'text-hud-red'
     },
-    { label: 'VOLUME', value: stats.scu.toLocaleString(), unit: 'SCU', color: 'text-hud-text' }
+    { label: t('trades.stats.volume'), value: stats.scu.toLocaleString(), unit: 'SCU', color: 'text-hud-text' }
   ]
 
   return (
@@ -1040,6 +1037,7 @@ interface SellModalState {
 }
 
 export function TradesView() {
+  const { t } = useTranslation()
   const { data: trades = [], isLoading } = useLocalTrades()
   const removeTrade = useRemoveTrade()
   const location = useLocation()
@@ -1065,8 +1063,11 @@ export function TradesView() {
   function handleBulkDelete() {
     confirm(
       {
-        title: 'Delete Trades',
-        message: `Delete ${selectedIds.size} trade run${selectedIds.size > 1 ? 's' : ''}? This cannot be undone.`
+        title: t('trades.confirm.deleteTitle'),
+        message: t('trades.confirm.deleteMessage', {
+          count: selectedIds.size,
+          s: selectedIds.size > 1 ? 's' : ''
+        })
       },
       () => {
         selectedIds.forEach((id) => removeTrade.mutate(id))
@@ -1078,8 +1079,11 @@ export function TradesView() {
   function askRemoveTrade(trade: LocalTrade) {
     confirm(
       {
-        title: 'Remove Trade',
-        message: `Remove trade run "${trade.locationFrom}${trade.locationTo ? ` → ${trade.locationTo}` : ''}"?`
+        title: t('trades.confirm.removeTitle'),
+        message: t('trades.confirm.removeMessage', {
+          from: trade.locationFrom,
+          to: trade.locationTo ? ` → ${trade.locationTo}` : ''
+        })
       },
       () => removeTrade.mutate(trade.id)
     )
@@ -1191,9 +1195,9 @@ export function TradesView() {
   }, [trades, filter])
 
   const FILTERS: { id: 'all' | 'buy' | 'sell'; label: string }[] = [
-    { id: 'all', label: 'ALL' },
-    { id: 'buy', label: 'BUY' },
-    { id: 'sell', label: 'SELL' }
+    { id: 'all', label: t('trades.filter.all') },
+    { id: 'buy', label: t('trades.filter.buy') },
+    { id: 'sell', label: t('trades.filter.sell') }
   ]
 
   return (
@@ -1207,14 +1211,14 @@ export function TradesView() {
               className="font-mono text-sm font-bold tracking-[0.15em] text-hud-amber uppercase"
               style={{ textShadow: '0 0 8px rgba(232,160,32,0.4)' }}
             >
-              Trade Log
+              {t('trades.title')}
             </h1>
-            <p className="hud-label mt-0.5 text-hud-muted">{trades.length} RUNS LOGGED</p>
+            <p className="hud-label mt-0.5 text-hud-muted">{t('trades.runsLogged', { count: trades.length })}</p>
           </div>
         </div>
         <Button variant="hud-amber" size="sm" onClick={() => setShowModal(true)}>
           <Plus className="h-3.5 w-3.5 mr-1.5" />
-          LOG TRADE RUN
+          {t('trades.logRun')}
         </Button>
       </div>
 
@@ -1247,10 +1251,10 @@ export function TradesView() {
           onToggle={toggleSelectAll}
           accentColor="hud-amber"
         />
-        <span className="hud-label">ROUTE / COMMODITIES</span>
-        <span className="hud-label text-right">BUY</span>
-        <span className="hud-label text-right">SELL</span>
-        <span className="hud-label text-right">PROFIT</span>
+        <span className="hud-label">{t('trades.col.route')}</span>
+        <span className="hud-label text-right">{t('trades.col.buy')}</span>
+        <span className="hud-label text-right">{t('trades.col.sell')}</span>
+        <span className="hud-label text-right">{t('trades.col.profit')}</span>
         <span />
       </div>
 
@@ -1269,7 +1273,7 @@ export function TradesView() {
               drop-shadow-[0_0_8px_rgba(232,160,32,0.3)]"
             />
             <p className="hud-label text-hud-amber text-center">
-              {trades.length === 0 ? 'NO TRADES LOGGED' : 'NO TRADES WITH THIS FILTER'}
+              {trades.length === 0 ? t('trades.noTrades') : t('trades.noTradesFilter')}
             </p>
           </div>
         </div>
@@ -1313,7 +1317,7 @@ export function TradesView() {
               shadow-[0_4px_24px_rgba(0,0,0,0.7)]"
           >
             <Trash2 className="h-3.5 w-3.5" />
-            DELETE {selectedIds.size} RUN{selectedIds.size > 1 ? 'S' : ''}
+            {t('trades.bulk.delete', { count: selectedIds.size, s: selectedIds.size > 1 ? 'S' : '' })}
             <button
               onClick={(e) => {
                 e.stopPropagation()

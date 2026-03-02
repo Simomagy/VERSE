@@ -11,7 +11,7 @@ export function createSystemTray(): Tray {
   const icon = nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 })
 
   tray = new Tray(icon)
-  tray.setToolTip('VERSE - UEX Companion')
+  tray.setToolTip('V.E.R.S.E.')
 
   updateTrayMenu()
 
@@ -27,7 +27,7 @@ export function updateTrayMenu(): void {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'VERSE - UEX Companion',
+      label: 'V.E.R.S.E.',
       enabled: false
     },
     { type: 'separator' },

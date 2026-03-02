@@ -130,6 +130,7 @@ export interface AppSettings {
   minimizeToTray: boolean
   notifications: boolean
   hotkey: string
+  language: string
 }
 
 // ─── Local data types (persisted in electron-store) ───────────────────────

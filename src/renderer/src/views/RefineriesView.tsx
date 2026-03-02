@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BACKDROP_VARIANTS, MODAL_VARIANTS, LIST_VARIANTS, ROW_VARIANTS } from '../lib/animations'
 import { FlaskConical, Plus, Trash2, X, TrendingUp, Clock, ShoppingCart } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
+import { Select } from '../components/ui/select'
 import { Skeleton } from '../components/ui/skeleton'
 import { ComboInput } from '../components/ui/combo-input'
 import { useRefineryMethods, useRefineryYields } from '../hooks/useRefinery'
@@ -224,11 +226,12 @@ function MineralsTable({
   onAdd: () => void
   onRemove: (key: string) => void
 }) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-1">
       {/* Header */}
       <div className="grid grid-cols-[1fr_5rem_6rem_5rem_6rem_2rem] gap-2 px-1 pb-1">
-        {['MINERAL', 'cSCU IN', 'YIELD %', 'cSCU OUT', 'PRICE/SCU', ''].map((h) => (
+        {[t('refineries.minerals.mineral'), t('refineries.minerals.scuIn'), t('refineries.minerals.yield'), t('refineries.minerals.scuOut'), t('refineries.minerals.pricePerScu'), ''].map((h) => (
           <span key={h} className="hud-label text-hud-dim text-right first:text-left">
             {h}
           </span>
@@ -288,8 +291,8 @@ function MineralsTable({
                 type="button"
                 title={
                   row.yieldManual
-                    ? 'Manual mode — click to switch back to auto (UEX)'
-                    : 'Auto mode (UEX) — click to enter manually'
+                    ? t('refineries.minerals.yieldManualTitle')
+                    : t('refineries.minerals.yieldAutoTitle')
                 }
                 className={[
                   'absolute right-1 top-1/2 -translate-y-1/2',
@@ -376,7 +379,7 @@ function MineralsTable({
           transition-colors py-1 px-1"
       >
         <Plus className="h-3 w-3" />
-        ADD MINERAL
+        {t('refineries.minerals.addMineral')}
       </button>
     </div>
   )
@@ -430,6 +433,7 @@ function jobToForm(
 }
 
 function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: LocalRefineryJob }) {
+  const { t } = useTranslation()
   const addJob = useAddRefineryJob()
   const updateJob = useUpdateRefineryJob()
 
@@ -555,7 +559,7 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
           <div className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 bg-hud-purple" />
             <span className="hud-label text-hud-text tracking-widest">
-              {editJob ? 'EDIT REFINERY JOB' : 'LOG REFINERY JOB'}
+              {editJob ? t('refineries.modal.titleEdit') : t('refineries.modal.titleLog')}
             </span>
           </div>
           <button
@@ -569,7 +573,7 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
         <div className="p-5 space-y-5 max-h-[80vh] overflow-y-auto scrollbar-hud">
           {/* ── Header job ── */}
           <div className="grid grid-cols-2 gap-3">
-            <Field label="REFINERY LOCATION" required>
+            <Field label={t('refineries.modal.refinery')} required>
               <ComboInput
                 value={header.refinery}
                 onChange={(v) => setHeaderField('refinery', v)}
@@ -578,24 +582,16 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
               />
             </Field>
 
-            <Field label="REFINING METHOD" required>
+            <Field label={t('refineries.modal.method')} required>
               {methodsLoading ? (
                 <Skeleton className="h-9 w-full" />
               ) : (
-                <select
-                  className="w-full h-9 border border-hud-border bg-hud-deep px-3 text-sm text-hud-text font-mono
-                    focus:outline-none focus:border-hud-purple focus:shadow-[0_0_0_1px_rgba(160,96,255,0.2)]
-                    transition-[border-color,box-shadow] duration-150"
+                <Select
                   value={header.methodId}
-                  onChange={(e) => setHeaderField('methodId', e.target.value)}
-                >
-                  <option value="">— Select Method —</option>
-                  {methods.map((m) => (
-                    <option key={m.id} value={String(m.id)}>
-                      {m.name}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(v) => setHeaderField('methodId', v)}
+                  placeholder={t('refineries.modal.methodNone')}
+                  options={methods.map((m) => ({ value: String(m.id), label: m.name }))}
+                />
               )}
             </Field>
           </div>
@@ -619,9 +615,9 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
           {/* ── Minerals table ── */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="hud-label text-hud-muted">MINERALS</span>
+              <span className="hud-label text-hud-muted">{t('refineries.modal.minerals')}</span>
               <div className="flex-1 h-px bg-hud-border" />
-              <span className="hud-label text-hud-dim">Yield: A=auto (UEX) · M=manual</span>
+              <span className="hud-label text-hud-dim">{t('refineries.modal.yieldHint')}</span>
             </div>
             <MineralsTable
               rows={rows}
@@ -638,15 +634,15 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
           {totalEstValue > 0 && (
             <div className="grid grid-cols-3 gap-2 pt-1 border-t border-hud-border">
               <div className="hud-panel p-2 text-center">
-                <p className="hud-label text-hud-dim">EST. VALUE</p>
+                <p className="hud-label text-hud-dim">{t('refineries.modal.estValue')}</p>
                 <p className="font-mono text-sm text-hud-cyan">{formatUEC(totalEstValue)}</p>
               </div>
               <div className="hud-panel p-2 text-center">
-                <p className="hud-label text-hud-dim">REFINE COST</p>
+                <p className="hud-label text-hud-dim">{t('refineries.modal.refineCost')}</p>
                 <p className="font-mono text-sm text-hud-amber">{formatUEC(refineCost)}</p>
               </div>
               <div className="hud-panel p-2 text-center">
-                <p className="hud-label text-hud-dim">NET PROFIT</p>
+                <p className="hud-label text-hud-dim">{t('refineries.modal.netProfit')}</p>
                 <p
                   className={`font-mono text-sm font-bold ${netProfit >= 0 ? 'text-hud-green' : 'text-hud-red'}`}
                 >
@@ -660,7 +656,7 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
           {/* ── Footer campi ── */}
           <div className="grid grid-cols-2 gap-3">
             {/* Durata raffinazione */}
-            <Field label="REFINE DURATION">
+            <Field label={t('refineries.modal.duration')}>
               <div className="flex items-center gap-2">
                 <div className="flex-1 relative">
                   <Input
@@ -690,7 +686,7 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
               </div>
             </Field>
 
-            <Field label="REFINING COST (aUEC)">
+            <Field label={t('refineries.modal.cost')}>
               <Input
                 type="number"
                 min="0"
@@ -701,9 +697,9 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
             </Field>
           </div>
 
-          <Field label="NOTES">
+          <Field label={t('common.notes')}>
             <Input
-              placeholder="Optional..."
+              placeholder={t('common.optional')}
               value={header.notes}
               onChange={(e) => setHeaderField('notes', e.target.value)}
             />
@@ -713,7 +709,7 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
         {/* Footer modal */}
         <div className="flex gap-2 px-5 py-3 border-t border-hud-border">
           <Button variant="hud-ghost" className="flex-1" onClick={onClose}>
-            CANCEL
+            {t('refineries.modal.cancel')}
           </Button>
           <Button
             variant="hud"
@@ -721,7 +717,9 @@ function AddJobModal({ onClose, editJob }: { onClose: () => void; editJob?: Loca
             onClick={handleSubmit}
             disabled={!isValid || isPending}
           >
-            {isPending ? (editJob ? 'SAVING...' : 'LOGGING...') : editJob ? 'SAVE JOB' : 'LOG JOB'}
+            {isPending
+              ? (editJob ? t('refineries.modal.saving') : t('refineries.modal.logging'))
+              : (editJob ? t('refineries.modal.saveJob') : t('refineries.modal.logJob'))}
           </Button>
         </div>
       </motion.div>
@@ -752,6 +750,7 @@ function JobRow({
   onSell: () => void
   onRemove: () => void
 }) {
+  const { t } = useTranslation()
   const isProfit = job.netProfit >= 0
   const totalScuIn = job.minerals.reduce((a, m) => a + m.scuInput, 0)
   const totalScuOut = parseFloat(job.minerals.reduce((a, m) => a + m.scuOutput, 0).toFixed(2))
@@ -760,7 +759,7 @@ function JobRow({
 
   const menuItems = [
     {
-      label: 'Edit Job',
+      label: t('refineries.menu.edit'),
       icon: (
         <svg
           className="h-3 w-3"
@@ -778,7 +777,7 @@ function JobRow({
     ...(hasSellable
       ? [
           {
-            label: 'Create Sell Trade',
+            label: t('refineries.menu.createSell'),
             icon: <ShoppingCart className="h-3 w-3" />,
             onClick: onSell
           }
@@ -786,7 +785,7 @@ function JobRow({
       : []),
     { separator: true as const },
     {
-      label: 'Remove',
+      label: t('refineries.menu.remove'),
       icon: <Trash2 className="h-3 w-3" />,
       variant: 'danger' as const,
       onClick: onRemove
@@ -876,7 +875,7 @@ function JobRow({
                 <p className="font-mono text-xs text-hud-cyan">
                   {formatUEC(job.totalEstimatedValue)}
                 </p>
-                <p className="hud-label text-hud-dim">EST. VALUE</p>
+                <p className="hud-label text-hud-dim">{t('refineries.row.estValue')}</p>
               </div>
             )}
 
@@ -888,7 +887,7 @@ function JobRow({
                   {isProfit ? '+' : ''}
                   {formatUEC(job.netProfit)}
                 </p>
-                <p className="hud-label text-hud-dim">PROFIT</p>
+                <p className="hud-label text-hud-dim">{t('refineries.row.profit')}</p>
               </div>
             )}
 
@@ -907,7 +906,7 @@ function JobRow({
                 transition-all duration-150 font-mono text-[10px] tracking-wider"
               >
                 <ShoppingCart className="h-3 w-3" />
-                SELL
+                {t('refineries.row.sell')}
               </button>
             )}
 
@@ -931,6 +930,7 @@ function JobRow({
 // ── Stats panel ───────────────────────────────────────────────────────────
 
 function RefineryStats({ jobs }: { jobs: LocalRefineryJob[] }) {
+  const { t } = useTranslation()
   const stats = useMemo(
     () => ({
       totalValue: jobs.reduce((a, j) => a + j.totalEstimatedValue, 0),
@@ -945,25 +945,25 @@ function RefineryStats({ jobs }: { jobs: LocalRefineryJob[] }) {
     <div className="grid grid-cols-4 gap-2">
       {[
         {
-          label: 'EST. VALUE',
+          label: t('refineries.stats.estValue'),
           value: formatUEC(stats.totalValue),
           unit: 'aUEC',
           color: 'text-hud-cyan'
         },
         {
-          label: 'REFINE COST',
+          label: t('refineries.stats.refineCost'),
           value: formatUEC(stats.totalCost),
           unit: 'aUEC',
           color: 'text-hud-amber'
         },
         {
-          label: 'NET PROFIT',
+          label: t('refineries.stats.netProfit'),
           value: formatUEC(stats.totalProfit),
           unit: 'aUEC',
           color: stats.totalProfit >= 0 ? 'text-hud-green' : 'text-hud-red'
         },
         {
-          label: 'SCU PROCESSED',
+          label: t('refineries.stats.scuProcessed'),
           value: stats.totalScuIn.toLocaleString(),
           unit: 'SCU',
           color: 'text-hud-text'
@@ -982,6 +982,7 @@ function RefineryStats({ jobs }: { jobs: LocalRefineryJob[] }) {
 // ── Main view ─────────────────────────────────────────────────────────────
 
 export function RefineriesView() {
+  const { t } = useTranslation()
   const { data: jobs = [], isLoading } = useLocalRefineryJobs()
   const removeJob = useRemoveRefineryJob()
   const navigate = useNavigate()
@@ -1027,8 +1028,8 @@ export function RefineriesView() {
   function askRemoveJob(id: string, refinery: string) {
     confirm(
       {
-        title: 'Remove Job',
-        message: `Remove refinery job at "${refinery}"? This cannot be undone.`
+        title: t('refineries.confirm.removeTitle'),
+        message: t('refineries.confirm.removeMessage', { refinery })
       },
       () => removeJob.mutate(id)
     )
@@ -1045,9 +1046,9 @@ export function RefineriesView() {
               className="font-mono text-sm font-bold tracking-[0.15em] text-hud-purple uppercase"
               style={{ textShadow: '0 0 8px rgba(160,96,255,0.4)' }}
             >
-              Refinery Log
+              {t('refineries.title')}
             </h1>
-            <p className="hud-label mt-0.5 text-hud-muted">{jobs.length} JOBS LOGGED</p>
+            <p className="hud-label mt-0.5 text-hud-muted">{t('refineries.jobsLogged', { count: jobs.length })}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -1069,7 +1070,7 @@ export function RefineriesView() {
             onClick={() => setShowModal(true)}
           >
             <Plus className="h-3.5 w-3.5 mr-1.5" />
-            LOG JOB
+            {t('refineries.logJob')}
           </Button>
         </div>
       </div>
@@ -1083,12 +1084,12 @@ export function RefineriesView() {
           onToggle={toggleSelectAll}
           accentColor="hud-green"
         />
-        <span className="hud-label text-hud-muted">LOCATION · METHOD · MINERALS</span>
+        <span className="hud-label text-hud-muted">{t('refineries.col.locationMethod')}</span>
         <div className="flex-1 h-px bg-hud-border" />
         {anySelected && (
           <span className="hud-label text-hud-green">{selectedIds.size} SELECTED</span>
         )}
-        <span className="hud-label text-hud-dim">SCU · VALUE · PROFIT · TIMER</span>
+        <span className="hud-label text-hud-dim">{t('refineries.col.metrics')}</span>
       </div>
 
       {/* Lista */}
@@ -1105,9 +1106,9 @@ export function RefineriesView() {
               className="h-12 w-12 text-hud-purple/40 mx-auto mb-3
               drop-shadow-[0_0_8px_rgba(160,96,255,0.3)]"
             />
-            <p className="hud-label text-hud-purple text-center">NO REFINERY JOBS LOGGED</p>
+            <p className="hud-label text-hud-purple text-center">{t('refineries.noJobs')}</p>
             <p className="hud-label text-hud-dim text-center mt-1">
-              Log your first job to track yields and profits
+              {t('refineries.noJobsHint')}
             </p>
           </div>
         </div>
@@ -1148,7 +1149,7 @@ export function RefineriesView() {
               shadow-[0_4px_24px_rgba(0,0,0,0.7)]"
           >
             <ShoppingCart className="h-3.5 w-3.5" />
-            SELL {selectedIds.size} JOB{selectedIds.size > 1 ? 'S' : ''}
+            {t('refineries.bulk.sell', { count: selectedIds.size, s: selectedIds.size > 1 ? 'S' : '' })}
             <button
               onClick={(e) => {
                 e.stopPropagation()

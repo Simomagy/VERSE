@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Shield, Search, RefreshCw, X, ShoppingCart, ChevronLeft, ChevronRight, Package, Heart } from 'lucide-react'
 import { BACKDROP_VARIANTS, MODAL_VARIANTS } from '../lib/animations'
 import { useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { Input } from '../components/ui/input'
+import { Select } from '../components/ui/select'
 import { Badge } from '../components/ui/badge'
 import { Skeleton } from '../components/ui/skeleton'
 import { Button } from '../components/ui/button'
@@ -140,6 +142,7 @@ function EquipmentDetailDialog({
   accent: string
   onClose: () => void
 }) {
+  const { t } = useTranslation()
   const slot = extractSlot(item)
   const shops = item.uex_prices.filter((p) => p.price_buy > 0 || (p.price_sell ?? 0) > 0)
 
@@ -169,7 +172,7 @@ function EquipmentDetailDialog({
         <div className="flex items-center justify-between px-5 py-3 border-b border-hud-border shrink-0">
           <div className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 shrink-0" style={{ background: accent }} />
-            <span className="hud-label text-hud-text tracking-widest">ITEM DETAIL</span>
+            <span className="hud-label text-hud-text tracking-widest">{t('equipment.detail.title')}</span>
           </div>
           <button onClick={onClose} className="text-hud-muted hover:text-hud-red transition-colors p-1">
             <X className="h-4 w-4" />
@@ -209,10 +212,10 @@ function EquipmentDetailDialog({
             {/* Description */}
             {item.description?.en_EN && (
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="hud-label text-hud-muted">DESCRIPTION</span>
-                  <div className="flex-1 h-px bg-hud-border" />
-                </div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="hud-label text-hud-muted">{t('equipment.detail.description')}</span>
+                <div className="flex-1 h-px bg-hud-border" />
+              </div>
                 <p
                   className="text-xs text-hud-dim leading-relaxed border-l-2 pl-3"
                   style={{ borderColor: `${accent}50` }}
@@ -226,22 +229,22 @@ function EquipmentDetailDialog({
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <ShoppingCart className="h-3 w-3 text-hud-muted" />
-                <span className="hud-label text-hud-muted">WHERE TO BUY</span>
+                <span className="hud-label text-hud-muted">{t('equipment.detail.whereToBuy')}</span>
                 <div className="flex-1 h-px bg-hud-border" />
               </div>
 
               {shops.length === 0 ? (
                 <div className="flex items-center gap-2 py-3">
                   <Package className="h-3.5 w-3.5 text-hud-dim" />
-                  <span className="hud-label text-hud-dim">No known shops for this item</span>
+                  <span className="hud-label text-hud-dim">{t('equipment.detail.noShops')}</span>
                 </div>
               ) : (
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="border-b border-hud-border">
-                      <th className="hud-label text-hud-dim font-normal text-left pb-1.5 pl-2 pr-3">TERMINAL</th>
-                      <th className="hud-label text-hud-dim font-normal text-right pb-1.5 pr-3 w-32">BUY</th>
-                      <th className="hud-label text-hud-dim font-normal text-right pb-1.5 w-20">SYSTEM</th>
+                      <th className="hud-label text-hud-dim font-normal text-left pb-1.5 pl-2 pr-3">{t('equipment.detail.col.terminal')}</th>
+                      <th className="hud-label text-hud-dim font-normal text-right pb-1.5 pr-3 w-32">{t('equipment.detail.col.buy')}</th>
+                      <th className="hud-label text-hud-dim font-normal text-right pb-1.5 w-20">{t('equipment.detail.col.system')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -291,7 +294,7 @@ function EquipmentDetailDialog({
             <div className="border-t border-hud-border bg-hud-deep/60 p-3 space-y-2 shrink-0">
               {item.size != null && (
                 <div className="flex items-center justify-between">
-                  <span className="hud-label text-hud-dim">SIZE</span>
+                  <span className="hud-label text-hud-dim">{t('equipment.detail.size')}</span>
                   <span
                     className="hud-label px-1.5 py-0.5 border font-bold"
                     style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}
@@ -302,7 +305,7 @@ function EquipmentDetailDialog({
               )}
               {item.manufacturer && (
                 <div className="flex items-center justify-between">
-                  <span className="hud-label text-hud-dim">MFR</span>
+                  <span className="hud-label text-hud-dim">{t('equipment.detail.mfr')}</span>
                   <span
                     className="hud-label px-1.5 py-0.5 border font-bold"
                     style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}
@@ -313,7 +316,7 @@ function EquipmentDetailDialog({
               )}
               {item.version && (
                 <div className="flex items-center justify-between">
-                  <span className="hud-label text-hud-dim">VERSION</span>
+                  <span className="hud-label text-hud-dim">{t('equipment.detail.version')}</span>
                   <span className="hud-label text-hud-muted">{item.version.replace(/-LIVE.*$/, '')}</span>
                 </div>
               )}
@@ -329,7 +332,7 @@ function EquipmentDetailDialog({
               tracking-widest uppercase hover:border-hud-border-glow hover:text-hud-text
               transition-all duration-150"
           >
-            CLOSE
+            {t('equipment.detail.close')}
           </button>
         </div>
       </motion.div>
@@ -470,6 +473,7 @@ function SubTabBar({ tabs, activeId, accent, onSelect }: SubTabBarProps) {
 const ITEMS_PER_PAGE = 10
 
 export function EquipmentView() {
+  const { t } = useTranslation()
   const [activeTabId, setActiveTabId] = useState<string>('fps-armor')
   const [activeSubTabIds, setActiveSubTabIds] = useState<Record<string, string>>({})
   const [search, setSearch] = useState('')
@@ -574,9 +578,9 @@ export function EquipmentView() {
   }
 
   function buildStatusLabel(): string {
-    if (isLoading) return 'LOADING...'
+    if (isLoading) return t('equipment.loading')
     const label = `${activeMainTab.label} · ${activeSubTab.label}`
-    if (!isFullyLoaded) return `${items.length} / ${totalInApi} ${label} LOADING...`
+    if (!isFullyLoaded) return `${items.length} / ${totalInApi} ${label} ${t('equipment.loading')}`
     return `${items.length} ${label} ITEMS`
   }
 
@@ -598,7 +602,7 @@ export function EquipmentView() {
               className="font-mono text-sm font-bold tracking-[0.15em] uppercase"
               style={{ color: activeMainTab.accent, textShadow: `0 0 8px ${activeMainTab.accent}66` }}
             >
-              Equipment Database
+              {t('equipment.title')}
             </h1>
             <div className="flex items-center gap-2 mt-0.5">
               <p className="hud-label text-hud-muted">{buildStatusLabel()}</p>
@@ -625,7 +629,7 @@ export function EquipmentView() {
           <Button
             variant="hud-ghost"
             size="icon"
-            title="Clear image cache"
+            title={t('equipment.clearImageCache')}
             disabled={isClearing}
             onClick={handleClearImageCache}
             className="border-hud-border text-hud-muted hover:text-hud-text hover:border-hud-text/40"
@@ -682,29 +686,20 @@ export function EquipmentView() {
       {/* Filters */}
       <div className="flex gap-2 shrink-0">
         {[
-          { label: 'BRAND', value: filterBrand,   options: brands,    set: setFilterBrand   },
-          { label: 'SLOT',  value: filterSlot,     options: slots,     set: setFilterSlot    },
-          { label: 'TYPE',  value: filterSubType,  options: subTypes,  set: setFilterSubType },
-          { label: 'SIZE',  value: filterSize,     options: sizes,     set: setFilterSize,   narrow: true }
-        ].map(({ label, value, options, set, narrow }) => (
+          { labelKey: 'equipment.filter.brand' as const, value: filterBrand, options: brands, set: setFilterBrand, sizePrefix: false },
+          { labelKey: 'equipment.filter.slot' as const, value: filterSlot, options: slots, set: setFilterSlot, sizePrefix: false },
+          { labelKey: 'equipment.filter.type' as const, value: filterSubType, options: subTypes, set: setFilterSubType, sizePrefix: false },
+          { labelKey: 'equipment.filter.size' as const, value: filterSize, options: sizes, set: setFilterSize, sizePrefix: true, narrow: true }
+        ].map(({ labelKey, value, options, set, sizePrefix, narrow }) => (
           options.length === 0 ? null : (
-            <div key={label} className={`relative ${narrow ? 'w-20 shrink-0' : 'flex-1'}`}>
-              <select
-                value={value}
-                onChange={(e) => { set(e.target.value); resetPage() }}
-                className="w-full h-8 pl-2 pr-6 border border-hud-border bg-hud-panel font-mono text-[0.6rem]
-                  tracking-widest text-hud-muted focus:outline-none focus:border-hud-accent
-                  appearance-none cursor-pointer transition-colors hover:border-hud-border-glow"
-                style={{ borderColor: value ? `${activeMainTab.accent}60` : undefined,
-                         color: value ? activeMainTab.accent : undefined }}
-              >
-                <option value="">{label}</option>
-                {options.map((o) => (
-                  <option key={o} value={o}>S{o}</option>
-                ))}
-              </select>
-              <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-hud-muted text-[0.5rem]">▼</span>
-            </div>
+            <Select
+              key={labelKey}
+              className={narrow ? 'w-20 shrink-0' : 'flex-1'}
+              value={value}
+              onValueChange={(v) => { set(v); resetPage() }}
+              placeholder={t(labelKey)}
+              options={options.map((o) => ({ value: o, label: sizePrefix ? `S${o}` : o }))}
+            />
           )
         ))}
         {(filterBrand || filterSlot || filterSubType || filterSize) && (
@@ -735,10 +730,10 @@ export function EquipmentView() {
               style={{ color: activeMainTab.accent }}
             />
             <p className="hud-label text-center" style={{ color: activeMainTab.accent }}>
-              NO ITEMS FOUND
+              {t('equipment.noItems')}
             </p>
             {search && (
-              <p className="hud-label text-hud-muted text-center mt-1">No results for "{search}"</p>
+              <p className="hud-label text-hud-muted text-center mt-1">{t('equipment.noItemsSearch', { search })}</p>
             )}
           </div>
         </div>
@@ -815,17 +810,17 @@ export function EquipmentView() {
               disabled={safePage === 1}
             >
               <ChevronLeft className="h-3.5 w-3.5" />
-              PREV
+              {t('equipment.pagination.prev')}
             </button>
 
-            <span className="hud-label text-hud-dim">{filtered.length} items</span>
+            <span className="hud-label text-hud-dim">{t('equipment.itemCount', { count: filtered.length })}</span>
 
             <button
               className="flex items-center gap-1 hud-label text-hud-muted hover:text-hud-text disabled:opacity-30 disabled:pointer-events-none transition-colors"
               onClick={() => goToPage(safePage + 1)}
               disabled={safePage === totalPages}
             >
-              NEXT
+              {t('equipment.pagination.next')}
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </div>

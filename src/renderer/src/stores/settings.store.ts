@@ -18,6 +18,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   minimizeToTray: true,
   notifications: true,
   hotkey: 'CommandOrControl+Shift+V',
+  language: 'en',
   isLoading: false,
   error: null,
 

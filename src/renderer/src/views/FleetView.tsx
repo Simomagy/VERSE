@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Ship, Plus, Trash2, Search, X, Package, ChevronRight, Pencil, Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Badge } from '../components/ui/badge'
@@ -142,6 +143,7 @@ function AddShipModal({
   vehicles: WikiVehicle[]
   loadingVehicles: boolean
 }) {
+  const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<WikiVehicle | null>(null)
   const [nickname, setNickname] = useState('')
@@ -188,7 +190,7 @@ function AddShipModal({
         <div className="flex items-center justify-between px-5 py-3 border-b border-hud-border shrink-0">
           <div className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 bg-hud-blue" style={{ boxShadow: '0 0 6px #4080ff' }} />
-            <span className="hud-label text-hud-blue tracking-widest">ADD VESSEL</span>
+            <span className="hud-label text-hud-blue tracking-widest">{t('fleet.modal.title')}</span>
           </div>
           <button
             onClick={onClose}
@@ -214,7 +216,7 @@ function AddShipModal({
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-hud-muted" />
                   <Input
                     className="pl-8 h-8"
-                    placeholder="Name, manufacturer, role..."
+                    placeholder={t('fleet.modal.searchPlaceholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     autoFocus
@@ -256,7 +258,7 @@ function AddShipModal({
                   ))
                 )}
                 {!loadingVehicles && filtered.length === 0 && (
-                  <p className="hud-label text-hud-dim text-center py-12">NO VESSELS FOUND</p>
+                  <p className="hud-label text-hud-dim text-center py-12">{t('fleet.modal.noResults')}</p>
                 )}
               </div>
             </motion.div>
@@ -280,20 +282,20 @@ function AddShipModal({
 
               {/* Nickname */}
               <div>
-                <label className="hud-label text-hud-muted mb-2 block">CALLSIGN / NICKNAME</label>
+                <label className="hud-label text-hud-muted mb-2 block">{t('fleet.modal.nicknameLabel')}</label>
                 <Input
                   placeholder={selected.name}
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   autoFocus
                 />
-                <p className="hud-label text-hud-dim mt-1.5">Leave empty to use official name</p>
+                <p className="hud-label text-hud-dim mt-1.5">{t('fleet.modal.nicknameHint')}</p>
               </div>
 
               {/* Actions */}
               <div className="flex gap-2 pt-1">
                 <Button variant="hud-ghost" className="flex-1" onClick={() => setSelected(null)}>
-                  BACK
+                  {t('fleet.modal.back')}
                 </Button>
                 <Button
                   className="flex-1 border-hud-blue text-hud-blue hover:bg-hud-blue/10
@@ -302,7 +304,7 @@ function AddShipModal({
                   onClick={handleConfirm}
                   disabled={addShip.isPending}
                 >
-                  {addShip.isPending ? 'REGISTERING...' : 'REGISTER VESSEL'}
+                  {addShip.isPending ? t('fleet.modal.registering') : t('fleet.modal.register')}
                 </Button>
               </div>
             </motion.div>
@@ -315,6 +317,7 @@ function AddShipModal({
 
 // ── Main view ─────────────────────────────────────────────────────────────
 export function FleetView() {
+  const { t } = useTranslation()
   const { data: fleet = [], isLoading } = useLocalFleet()
   const { data: vehicles = [], isLoading: loadingVehicles } = useWikiVehicles()
   const updateShip = useUpdateShip()
@@ -334,11 +337,14 @@ export function FleetView() {
               className="font-mono text-sm font-bold tracking-[0.15em] text-hud-blue uppercase"
               style={{ textShadow: '0 0 8px rgba(64,128,255,0.4)' }}
             >
-              Fleet Registry
+              {t('fleet.title')}
             </h1>
             <p className="hud-label mt-0.5 text-hud-muted">
-              {fleet.length} {fleet.length === 1 ? 'VESSEL' : 'VESSELS'} REGISTERED
-              {totalScu > 0 && <span className="ml-2 text-hud-dim">· {totalScu} SCU TOTAL</span>}
+              {t('fleet.vesselsRegistered', {
+                count: fleet.length,
+                vessel: fleet.length === 1 ? t('fleet.vessel') : t('fleet.vessels')
+              })}
+              {totalScu > 0 && <span className="ml-2 text-hud-dim">{t('fleet.totalScu', { scu: totalScu })}</span>}
             </p>
           </div>
         </div>
@@ -350,7 +356,7 @@ export function FleetView() {
           onClick={() => setShowModal(true)}
         >
           <Plus className="h-3.5 w-3.5 mr-1.5" />
-          ADD VESSEL
+          {t('fleet.addVessel')}
         </Button>
       </div>
 
@@ -370,11 +376,11 @@ export function FleetView() {
               className="h-12 w-12 text-hud-blue/40 mx-auto mb-3
               drop-shadow-[0_0_8px_rgba(64,128,255,0.3)]"
             />
-            <p className="hud-label text-hud-blue text-center">NO VESSELS REGISTERED</p>
+            <p className="hud-label text-hud-blue text-center">{t('fleet.noVessels')}</p>
             <p className="hud-label text-hud-muted text-center mt-1">
               {vehicles.length > 0
-                ? `${vehicles.length} VESSELS AVAILABLE IN DATABASE`
-                : 'Loading database...'}
+                ? t('fleet.dbAvailable', { count: vehicles.length })
+                : t('fleet.dbLoading')}
             </p>
           </div>
         </div>

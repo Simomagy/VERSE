@@ -13,7 +13,7 @@ export function createMainWindow(): BrowserWindow {
   }
 
   mainWindow = new BrowserWindow({
-    width: 1200,
+    width: 1400,
     height: 800,
     minWidth: 900,
     minHeight: 600,
@@ -24,7 +24,7 @@ export function createMainWindow(): BrowserWindow {
     backgroundColor: '#070c12',
     autoHideMenuBar: true,
     skipTaskbar: false,
-    title: 'VERSE - UEX Companion',
+    title: 'V.E.R.S.E.',
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
