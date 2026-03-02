@@ -20,6 +20,9 @@ Manage your personal fleet. Ship data (manufacturer, role, cargo capacity) is so
 **Wallet**
 Record income, expenses, and balance adjustments. The current balance is always visible in the top bar. Trade runs automatically register their buy/sell amounts as wallet entries.
 
+**Equipment**
+Browse, realtime prices and locations about FPS Armors, Weapons, Clothings and Ship Upgrades
+
 **Auto-Update**
 The app checks GitHub Releases in the background on startup. When a new version is downloaded, a notification appears in the status bar. Clicking it installs the update and restarts the app.
 
