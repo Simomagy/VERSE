@@ -341,7 +341,76 @@ const en = {
   'commodities.detail.col.inventory': 'INVENTORY',
   'commodities.detail.col.price': 'PRICE',
   'commodities.detail.col.updated': 'UPDATED',
-  'commodities.detail.noTerminals': 'No terminals available for this operation'
+  'commodities.detail.noTerminals': 'No terminals available for this operation',
+
+  // ── Home / Dashboard ──────────────────────────────────────────────────────
+  'home.title': 'DASHBOARD',
+
+  'home.fleet.title': 'FLEET',
+  'home.fleet.emptyTitle': 'No vessels registered',
+  'home.fleet.empty': 'Register your first ship to start tracking your fleet.',
+  'home.fleet.vessels': 'VESSELS',
+  'home.fleet.viewAll': 'VIEW ALL',
+  'home.fleet.more': 'more',
+
+  'home.trades.title': 'RECENT TRADES',
+  'home.trades.emptyTitle': 'No trades logged',
+  'home.trades.empty': 'Start logging trade runs to track your profits.',
+  'home.trades.totalProfit': 'LAST 5 PROFIT',
+  'home.trades.logTrade': 'LOG TRADE',
+
+  'home.refinery.title': 'ACTIVE JOBS',
+  'home.refinery.emptyTitle': 'No active jobs',
+  'home.refinery.empty': 'No refinery jobs in progress. Log a job to start tracking.',
+  'home.refinery.ready': 'READY',
+  'home.refinery.logJob': 'LOG JOB',
+  'home.refinery.noTimer': 'No timer set',
+
+  'home.wallet.title': 'WALLET',
+  'home.wallet.emptyTitle': 'Wallet is empty',
+  'home.wallet.empty': 'Start tracking your aUEC balance and income.',
+  'home.wallet.balance': 'BALANCE',
+  'home.wallet.weeklyIncome': 'INCOME 7D',
+  'home.wallet.weeklyExpense': 'EXPENSE 7D',
+  'home.wallet.trend': 'TREND',
+  'home.wallet.addEntry': 'ADD ENTRY',
+
+  'home.commodities.title': 'TOP OPPORTUNITIES',
+  'home.commodities.emptyTitle': 'No price data',
+  'home.commodities.empty': 'Connect your UEX token and load commodity prices to see trading opportunities.',
+  'home.commodities.margin': 'MARGIN',
+  'home.commodities.buy': 'BUY',
+  'home.commodities.sell': 'SELL',
+  'home.commodities.refresh': 'REFRESH',
+
+  'home.stats.title': 'QUICK STATS',
+  'home.stats.weeklyProfit': 'WEEKLY PROFIT',
+  'home.stats.walletTrend': 'WALLET TREND',
+  'home.stats.avgProfit': 'AVG / TRADE',
+  'home.stats.noData': 'Log trades and wallet entries to see stats.',
+  'home.stats.noDataTitle': 'No data yet',
+
+  // ── Home header ───────────────────────────────────────────────────────────
+  'home.subtitle': 'VERSE COMPANION',
+
+  // ── Home quick-action modal ───────────────────────────────────────────────
+  'home.modal.section.fleet': 'Fleet',
+  'home.modal.section.trades': 'Trades',
+  'home.modal.section.refinery': 'Refinery',
+  'home.modal.section.wallet': 'Wallet',
+  'home.modal.openTitle': 'Open {{section}}?',
+  'home.modal.openBody': 'Navigate to the {{section}} section to log this action.',
+  'home.modal.cancel': 'CANCEL',
+  'home.modal.goTo': 'GO TO {{section}}',
+
+  // ── Commodities widget column headers ─────────────────────────────────────
+  'home.commodities.col.code': 'CODE',
+  'home.commodities.col.commodity': 'COMMODITY',
+
+  // ── Trades widget column headers ──────────────────────────────────────────
+  'home.trades.col.route': 'ROUTE · COMMODITY',
+  'home.trades.col.profit': 'PROFIT',
+  'home.trades.col.when': 'WHEN'
 } as const
 
 export type TranslationKey = keyof typeof en

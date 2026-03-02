@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { Ship, History, FlaskConical, Wallet, Settings, Shield, BarChart2 } from 'lucide-react'
+import { Home, Ship, History, FlaskConical, Wallet, Settings, Shield, BarChart2 } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
 import logo from '@renderer/assets/logo.png'
 
@@ -14,6 +14,14 @@ interface NavItemConfig {
 }
 
 const navItems: NavItemConfig[] = [
+  {
+    to: '/home',
+    icon: Home,
+    label: 'HOME',
+    accent: '#00e5ff',
+    iconActive: 'text-hud-cyan',
+    bg: 'hover:bg-hud-cyan/5'
+  },
   {
     to: '/fleet',
     icon: Ship,
