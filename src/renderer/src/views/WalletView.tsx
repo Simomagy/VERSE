@@ -33,7 +33,6 @@ import type { LocalWalletEntry, WalletEntryType } from '../api/types'
 // ── Costanti ──────────────────────────────────────────────────────────────
 
 const CATEGORY_KEYS = ['Trading', 'Mining', 'Refinery', 'Bounty', 'Salvage', 'Mission', 'Other'] as const
-type CategoryKey = (typeof CATEGORY_KEYS)[number]
 
 const TYPE_CONFIG: Record<
   WalletEntryType,
@@ -410,7 +409,7 @@ function EntryRow({
         {/* Descrizione + categoria */}
         <div className="min-w-0">
           <p className="font-mono text-sm text-hud-text truncate">
-            {entry.description || cfg.label}
+            {entry.description || t(cfg.labelKey as Parameters<typeof t>[0])}
           </p>
           <p className="hud-label text-hud-dim">{entry.category}</p>
         </div>
