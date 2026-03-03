@@ -62,6 +62,8 @@ const en = {
   'settings.preferences.header': 'PREFERENCES',
   'settings.preferences.language.label': 'Language',
   'settings.preferences.language.description': 'Display language for the interface',
+  'settings.preferences.language.credits': 'Translation credits',
+  'settings.preferences.language.creditsBy': 'by',
   'settings.preferences.minimizeToTray.label': 'Minimize to Tray',
   'settings.preferences.minimizeToTray.description':
     'Keep running in system tray when window is closed',

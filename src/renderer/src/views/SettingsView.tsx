@@ -7,7 +7,7 @@ import { useSettingsStore } from '../stores/settings.store'
 import { Input } from '../components/ui/input'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
-import i18n, { AVAILABLE_LANGUAGES } from '../i18n'
+import i18n, { AVAILABLE_LANGUAGES, languageCredits } from '../i18n'
 import { Select } from '../components/ui/select'
 
 // ── Sezione generica ──────────────────────────────────────────────────────
@@ -62,6 +62,39 @@ function ToggleRow({
   )
 }
 
+// ── Popup crediti traduzioni ──────────────────────────────────────────────
+function TranslationCreditsPopup({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation()
+
+  return (
+    <>
+      <div className="fixed inset-0 z-40" onClick={onClose} />
+      <div
+        className="absolute right-0 top-full mt-1.5 z-50 min-w-[200px] border border-hud-border bg-hud-panel shadow-lg"
+        style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%)' }}
+      >
+        <div className="px-3 py-2 border-b border-hud-border/60">
+          <span className="hud-label text-hud-cyan tracking-widest" style={{ fontSize: '9px' }}>
+            {t('settings.preferences.language.credits').toUpperCase()}
+          </span>
+        </div>
+        <div className="py-1">
+          {AVAILABLE_LANGUAGES.map((lang) => (
+            <div key={lang.code} className="flex items-center justify-between gap-4 px-3 py-1.5">
+              <span className="font-mono text-[10px] text-hud-muted tracking-wider">
+                {lang.code.toUpperCase()}
+              </span>
+              <span className="font-mono text-[10px] text-hud-text">
+                {languageCredits[lang.code as keyof typeof languageCredits] ?? '—'}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  )
+}
+
 // ── Toast status ──────────────────────────────────────────────────────────
 function StatusToast({
   status,
@@ -113,6 +146,7 @@ export function SettingsView() {
   const [appTokenInput, setAppTokenInput] = useState('')
   const [hotkeyInput, setHotkeyInput] = useState('')
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [creditsOpen, setCreditsOpen] = useState(false)
   const [toast, setToast] = useState<{
     status: 'saving' | 'success' | 'error'
     message: string
@@ -261,14 +295,24 @@ export function SettingsView() {
               <p className="font-mono text-sm text-hud-text">{t('settings.preferences.language.label')}</p>
               <p className="hud-label text-hud-muted mt-0.5">{t('settings.preferences.language.description')}</p>
             </div>
-            <Select
-              value={language}
-              onValueChange={(code) => {
-                i18n.changeLanguage(code)
-                updateSettings({ language: code })
-              }}
-              options={AVAILABLE_LANGUAGES.map((lang) => ({ value: lang.code, label: lang.label }))}
-            />
+            <div className="flex flex-col items-end gap-1 relative">
+              <Select
+                value={language}
+                onValueChange={(code) => {
+                  i18n.changeLanguage(code)
+                  updateSettings({ language: code })
+                }}
+                options={AVAILABLE_LANGUAGES.map((lang) => ({ value: lang.code, label: lang.label }))}
+              />
+              <button
+                onClick={() => setCreditsOpen((v) => !v)}
+                className="hud-label text-hud-dim hover:text-hud-cyan transition-colors"
+                style={{ fontSize: '9px' }}
+              >
+                {t('settings.preferences.language.credits')}
+              </button>
+              {creditsOpen && <TranslationCreditsPopup onClose={() => setCreditsOpen(false)} />}
+            </div>
           </div>
           <hr className="hud-divider" />
           <ToggleRow
