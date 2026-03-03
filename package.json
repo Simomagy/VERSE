@@ -1,6 +1,6 @@
 {
   "name": "verse",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "VERSE - Companion App for Star Citizen",
   "main": "./out/main/index.js",
   "author": "Prysma Studio",
