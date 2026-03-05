@@ -282,6 +282,8 @@ const en = {
   'equipment.filter.slot': 'SLOT',
   'equipment.filter.type': 'TYPE',
   'equipment.filter.size': 'SIZE',
+  'equipment.filter.grade': 'CLASS',
+  'equipment.filter.available': 'AVAIL.',
 
   'equipment.detail.title': 'ITEM DETAIL',
   'equipment.detail.description': 'DESCRIPTION',
@@ -333,6 +335,11 @@ const en = {
   'commodities.col.name': 'NAME',
   'commodities.col.sell': 'SELL',
   'commodities.col.buy': 'BUY',
+  'commodities.col.spread': 'SPREAD',
+  'commodities.filter.all': 'ALL',
+  'commodities.card.bestSell': 'BEST SELL',
+  'commodities.card.bestBuy': 'BEST BUY',
+  'commodities.card.margin': 'MARGIN',
 
   'commodities.detail.terminals': '{{count}} TERMINALS',
   'commodities.detail.tab.sell': 'SELL',

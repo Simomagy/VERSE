@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Download } from 'lucide-react'
+import { cn } from '../../lib/utils'
+import { useUIStore } from '../../stores/ui.store'
 
 const API_CHECK_INTERVAL_MS = 60_000 // ri-ping ogni 60 s
 
@@ -102,13 +104,19 @@ export function StatusBar() {
   const now = useClock()
   const { version, apiStatus } = useAppInfo()
   const { updateReady, install } = useUpdater()
+  const isOverlayMode = useUIStore((s) => s.isOverlayMode)
 
   const hh = now.getHours().toString().padStart(2, '0')
   const mm = now.getMinutes().toString().padStart(2, '0')
   const ss = now.getSeconds().toString().padStart(2, '0')
 
   return (
-    <footer className="flex h-7 shrink-0 items-center border-t border-hud-border bg-hud-deep px-4">
+    <footer
+      className={cn(
+        'flex h-7 shrink-0 items-center border-t border-hud-border px-4',
+        isOverlayMode ? 'bg-hud-deep/15' : 'bg-hud-deep'
+      )}
+    >
       {/* Sinistra: branding + versione */}
       <div className="flex items-center gap-3 flex-1">
         <span className="hud-label text-hud-muted">V.E.R.S.E.</span>

@@ -7,6 +7,7 @@ import { AppRouter } from './router'
 import { useAuthStore } from './stores/auth.store'
 import { useSettingsStore } from './stores/settings.store'
 import { useStaticDataStore } from './stores/static-data.store'
+import { useUIStore } from './stores/ui.store'
 import { BootScreen } from './components/layout/BootScreen'
 import { Onboarding } from './components/layout/Onboarding'
 import { UpdateBanner } from './components/layout/UpdateBanner'
@@ -45,8 +46,18 @@ function AppInit({ queryClient }: { queryClient: QueryClient }) {
   const language = useSettingsStore((state) => state.language)
   const staticStatus = useStaticDataStore((state) => state.status)
 
+  const setOverlayMode = useUIStore((state) => state.setOverlayMode)
+
   const [bootDone, setBootDone] = useState(false)
   const [onboardingDone, setOnboardingDone] = useState(false)
+
+  useEffect(() => {
+    window.api.overlay.onModeChanged((active) => {
+      setOverlayMode(active)
+      document.body.style.backgroundColor = active ? 'transparent' : ''
+      document.documentElement.dataset.overlay = active ? 'true' : ''
+    })
+  }, [])
 
   useEffect(() => {
     if (language) {

@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useWalletBalance } from '../../hooks/useWallet'
 import { formatUEC } from '../../lib/utils'
+import { useUIStore } from '../../stores/ui.store'
 
 interface ViewMeta {
   label: string
@@ -22,11 +23,16 @@ export function TopBar() {
   const balance = useWalletBalance()
   const meta = VIEW_META[pathname] ?? VIEW_META['/fleet']
   const isWallet = pathname === '/wallet'
+  const isOverlayMode = useUIStore((s) => s.isOverlayMode)
+
+  const bgStyle = isOverlayMode
+    ? `linear-gradient(90deg, ${meta.accentDim.replace('0.12', '0.06')} 0%, transparent 40%)`
+    : `linear-gradient(90deg, ${meta.accentDim} 0%, #000000 40%)`
 
   return (
     <header
       className="flex h-12 shrink-0 items-center border-b border-hud-border px-4 gap-4"
-      style={{ background: `linear-gradient(90deg, ${meta.accentDim} 0%, #000000 40%)` }}
+      style={{ background: bgStyle }}
     >
       {/* Logo */}
       <div className="flex items-center gap-2 shrink-0">

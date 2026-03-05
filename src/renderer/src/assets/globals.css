@@ -388,3 +388,42 @@
     cursor: default;
   }
 }
+
+/* ── Overlay mode overrides ─────────────────────────────────────────── */
+
+html[data-overlay='true'] .hud-panel,
+html[data-overlay='true'] .hud-panel-lg {
+  background-color: rgba(17, 17, 17, 0.55);
+}
+
+html[data-overlay='true'] .hud-row {
+  background-color: rgba(7, 12, 18, 0.80);
+}
+
+html[data-overlay='true'] .hud-row:hover {
+  background-color: rgba(13, 79, 107, 0.30);
+}
+
+html[data-overlay='true'] .bg-hud-panel {
+  background-color: rgba(17, 17, 17, 0.55);
+}
+
+html[data-overlay='true'] .text-hud-muted {
+  color: #e0e0e0;
+}
+
+html[data-overlay='true'] button.border-hud-amber {
+  background-color: rgba(232, 160, 32, 0.18);
+}
+
+html[data-overlay='true'] button.border-hud-cyan {
+  background-color: rgba(0, 229, 255, 0.10);
+}
+
+html[data-overlay='true'] button.border-hud-purple {
+  background-color: rgba(160, 96, 255, 0.10);
+}
+
+html[data-overlay='true'] button.border-hud-green {
+  background-color: rgba(0, 232, 124, 0.30);
+}

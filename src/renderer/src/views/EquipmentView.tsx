@@ -1,14 +1,14 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Search, RefreshCw, X, ShoppingCart, ChevronLeft, ChevronRight, Package, Heart } from 'lucide-react'
+import { Shield, Search, RefreshCw, X, ShoppingCart, ChevronLeft, ChevronRight, Package, Heart, CircleSlash, HandCoins } from 'lucide-react'
 import { BACKDROP_VARIANTS, MODAL_VARIANTS } from '../lib/animations'
 import { useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { Input } from '../components/ui/input'
 import { Select } from '../components/ui/select'
-import { Badge } from '../components/ui/badge'
 import { Skeleton } from '../components/ui/skeleton'
 import { Button } from '../components/ui/button'
+import { HudToggle } from '../components/ui/hud-toggle'
 import { EquipmentImage } from '../components/ui/EquipmentImage'
 import { LIST_VARIANTS, ROW_VARIANTS } from '../lib/animations'
 import { useWikiItems } from '../hooks/useWikiItems'
@@ -113,6 +113,44 @@ const SYSTEM_COLORS: Record<string, { text: string; border: string; bg: string }
   pyro:    { text: 'text-[#e86030]',  border: 'border-[#e86030]/40',  bg: 'bg-[#e86030]/10'  },
 }
 
+// ─── Badge color helpers ──────────────────────────────────────────────────
+
+interface BadgeColors { text: string; border: string; bg: string }
+
+const GRADE_COLORS: Record<string, BadgeColors> = {
+  A: { text: 'text-hud-cyan',   border: 'border-hud-cyan/50',   bg: 'bg-hud-cyan/10'   },
+  B: { text: 'text-hud-green',  border: 'border-hud-green/50',  bg: 'bg-hud-green/10'  },
+  C: { text: 'text-hud-amber',  border: 'border-hud-amber/50',  bg: 'bg-hud-amber/10'  },
+  D: { text: 'text-hud-red',    border: 'border-hud-red/50',    bg: 'bg-hud-red/10'    },
+}
+
+const CLASS_COLORS: Record<string, BadgeColors> = {
+  military:    { text: 'text-hud-blue',    border: 'border-hud-blue/50',    bg: 'bg-hud-blue/10'    },
+  civilian:    { text: 'text-hud-green',   border: 'border-hud-green/50',   bg: 'bg-hud-green/10'   },
+  industrial:  { text: 'text-hud-amber',   border: 'border-hud-amber/50',   bg: 'bg-hud-amber/10'   },
+  competition: { text: 'text-[#a060ff]',   border: 'border-[#a060ff]/50',   bg: 'bg-[#a060ff]/10'   },
+  stealth:     { text: 'text-hud-muted',   border: 'border-hud-border',     bg: 'bg-hud-deep/40'    },
+}
+
+const FALLBACK_COLORS: BadgeColors = { text: 'text-hud-muted', border: 'border-hud-border', bg: 'bg-transparent' }
+
+const SUBTYPE_COLORS: BadgeColors = { text: 'text-hud-amber',    border: 'border-hud-amber/50',    bg: 'bg-hud-amber/10'    }
+const SLOT_COLORS:    BadgeColors = { text: 'text-[#a060ff]',    border: 'border-[#a060ff]/50',    bg: 'bg-[#a060ff]/10'    }
+
+function getBadgeColors(map: Record<string, BadgeColors>, key: string | null | undefined): BadgeColors {
+  return (key && map[key.toLowerCase()]) ? map[key.toLowerCase()] : FALLBACK_COLORS
+}
+
+function HudBadge({ colors, children }: { colors: BadgeColors; children: React.ReactNode }) {
+  return (
+    <span className={`hud-label px-1.5 py-0 border font-bold ${colors.text} ${colors.border} ${colors.bg}`}>
+      {children}
+    </span>
+  )
+}
+
+// ─── Terminal name helpers ────────────────────────────────────────────────
+
 function parseTerminalName(raw: string): { name: string; system: string | null } {
   const systemMatch = raw.match(/\(([^)]+)\)\s*$/)
   const system = systemMatch ? systemMatch[1] : null
@@ -202,10 +240,20 @@ function EquipmentDetailDialog({
                     SIZE {item.size}
                   </span>
                 )}
-                {sanitizeString(item.sub_type) && <Badge variant="secondary">{sanitizeString(item.sub_type)}</Badge>}
-                {slot && <Badge variant="outline">{slot}</Badge>}
-                {item.grade && <Badge variant="outline">GRADE {item.grade}</Badge>}
-                {item.class && <Badge variant="outline">{item.class}</Badge>}
+                {sanitizeString(item.sub_type) && (
+                  <HudBadge colors={SUBTYPE_COLORS}>{sanitizeString(item.sub_type)}</HudBadge>
+                )}
+                {slot && <HudBadge colors={SLOT_COLORS}>{slot}</HudBadge>}
+                {item.grade && (
+                  <HudBadge colors={getBadgeColors(GRADE_COLORS, item.grade)}>
+                    GRADE {item.grade}
+                  </HudBadge>
+                )}
+                {item.class && (
+                  <HudBadge colors={getBadgeColors(CLASS_COLORS, item.class)}>
+                    {item.class.toUpperCase()}
+                  </HudBadge>
+                )}
               </div>
             </div>
 
@@ -352,6 +400,8 @@ function EquipmentCard({
   onClick: () => void
 }) {
   const slot = extractSlot(item)
+  const subType = sanitizeString(item.sub_type)
+  const hasNoShops = item.uex_prices.filter((p) => p.price_buy > 0 || (p.price_sell ?? 0) > 0).length === 0
 
   return (
     <div
@@ -360,6 +410,12 @@ function EquipmentCard({
     >
       <span className="absolute top-0 left-0 w-4 h-px" style={{ background: accent, opacity: 0.6 }} />
       <span className="absolute top-0 left-0 h-4 w-px" style={{ background: accent, opacity: 0.6 }} />
+
+      {hasNoShops && (
+        <span className="absolute top-2 right-2" title="Not available in any shop">
+          <CircleSlash className="h-3.5 w-3.5 text-hud-red/70" />
+        </span>
+      )}
 
       <div className="flex gap-3 p-3">
         <EquipmentImage itemName={item.name} category="armor" size={80} />
@@ -382,8 +438,18 @@ function EquipmentCard({
                 S{item.size}
               </span>
             )}
-            {sanitizeString(item.sub_type) && <Badge variant="secondary">{sanitizeString(item.sub_type)}</Badge>}
-            {slot && <Badge variant="outline">{slot}</Badge>}
+            {subType && <HudBadge colors={SUBTYPE_COLORS}>{subType}</HudBadge>}
+            {slot && <HudBadge colors={SLOT_COLORS}>{slot}</HudBadge>}
+            {item.grade && (
+              <HudBadge colors={getBadgeColors(GRADE_COLORS, item.grade)}>
+                {item.grade}
+              </HudBadge>
+            )}
+            {item.class && (
+              <HudBadge colors={getBadgeColors(CLASS_COLORS, item.class)}>
+                {item.class.toUpperCase()}
+              </HudBadge>
+            )}
           </div>
         </div>
       </div>
@@ -481,6 +547,8 @@ export function EquipmentView() {
   const [filterSlot, setFilterSlot] = useState('')
   const [filterSubType, setFilterSubType] = useState('')
   const [filterSize, setFilterSize] = useState('')
+  const [filterClass, setFilterClass] = useState('')
+  const [filterAvailable, setFilterAvailable] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [pageInput, setPageInput] = useState('')
   const [selectedItem, setSelectedItem] = useState<WikiArmorItem | null>(null)
@@ -496,11 +564,12 @@ export function EquipmentView() {
     activeSubTab.query
   )
 
-  const { brands, slots, subTypes, sizes } = useMemo(() => {
+  const { brands, slots, subTypes, sizes, classes } = useMemo(() => {
     const brandSet = new Set<string>()
     const slotSet = new Set<string>()
     const subTypeSet = new Set<string>()
     const sizeSet = new Set<number>()
+    const classSet = new Set<string>()
     for (const item of items) {
       if (item.manufacturer?.name) brandSet.add(item.manufacturer.name)
       const slot = extractSlot(item)
@@ -508,12 +577,14 @@ export function EquipmentView() {
       const subType = sanitizeString(item.sub_type)
       if (subType) subTypeSet.add(subType)
       if (item.size != null) sizeSet.add(item.size)
+      if (item.class) classSet.add(item.class)
     }
     return {
       brands: Array.from(brandSet).sort(),
       slots: Array.from(slotSet).sort(),
       subTypes: Array.from(subTypeSet).sort(),
-      sizes: Array.from(sizeSet).sort((a, b) => a - b).map(String)
+      sizes: Array.from(sizeSet).sort((a, b) => a - b).map(String),
+      classes: Array.from(classSet).sort()
     }
   }, [items])
 
@@ -523,6 +594,11 @@ export function EquipmentView() {
       if (filterSlot && extractSlot(item) !== filterSlot) return false
       if (filterSubType && sanitizeString(item.sub_type) !== filterSubType) return false
       if (filterSize && String(item.size ?? '') !== filterSize) return false
+      if (filterClass && item.class !== filterClass) return false
+      if (filterAvailable) {
+        const hasShop = item.uex_prices.some((p) => p.price_buy > 0 || (p.price_sell ?? 0) > 0)
+        if (!hasShop) return false
+      }
       if (search.trim()) {
         const q = search.toLowerCase()
         return (
@@ -534,7 +610,7 @@ export function EquipmentView() {
       }
       return true
     })
-  }, [items, search, filterBrand, filterSlot, filterSubType, filterSize])
+  }, [items, search, filterBrand, filterSlot, filterSubType, filterSize, filterClass, filterAvailable])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
   const safePage = Math.min(currentPage, totalPages)
@@ -557,6 +633,8 @@ export function EquipmentView() {
     setFilterSlot('')
     setFilterSubType('')
     setFilterSize('')
+    setFilterClass('')
+    setFilterAvailable(true)
     resetPage()
   }
 
@@ -686,12 +764,13 @@ export function EquipmentView() {
       {/* Filters */}
       <div className="flex gap-2 shrink-0">
         {[
-          { labelKey: 'equipment.filter.brand' as const, value: filterBrand, options: brands, set: setFilterBrand, sizePrefix: false },
-          { labelKey: 'equipment.filter.slot' as const, value: filterSlot, options: slots, set: setFilterSlot, sizePrefix: false },
-          { labelKey: 'equipment.filter.type' as const, value: filterSubType, options: subTypes, set: setFilterSubType, sizePrefix: false },
-          { labelKey: 'equipment.filter.size' as const, value: filterSize, options: sizes, set: setFilterSize, sizePrefix: true, narrow: true }
-        ].map(({ labelKey, value, options, set, sizePrefix, narrow }) => (
-          options.length === 0 ? null : (
+          { labelKey: 'equipment.filter.brand' as const, value: filterBrand, options: brands, set: setFilterBrand, sizePrefix: false, hideWhenOne: false },
+          { labelKey: 'equipment.filter.slot' as const, value: filterSlot, options: slots, set: setFilterSlot, sizePrefix: false, hideWhenOne: true },
+          { labelKey: 'equipment.filter.type' as const, value: filterSubType, options: subTypes, set: setFilterSubType, sizePrefix: false, hideWhenOne: false },
+          { labelKey: 'equipment.filter.size' as const, value: filterSize, options: sizes, set: setFilterSize, sizePrefix: true, narrow: true, hideWhenOne: false },
+          { labelKey: 'equipment.filter.grade' as const, value: filterClass, options: classes, set: setFilterClass, sizePrefix: false, hideWhenOne: false }
+        ].map(({ labelKey, value, options, set, sizePrefix, narrow, hideWhenOne }) => (
+          options.length === 0 || (hideWhenOne && options.length <= 1) ? null : (
             <Select
               key={labelKey}
               className={narrow ? 'w-20 shrink-0' : 'flex-1'}
@@ -702,7 +781,13 @@ export function EquipmentView() {
             />
           )
         ))}
-        {(filterBrand || filterSlot || filterSubType || filterSize) && (
+        <HudToggle
+          value={filterAvailable}
+          onChange={(v) => { setFilterAvailable(v); resetPage() }}
+          icon={<HandCoins className="h-3.5 w-3.5" />}
+          color="hud-green"
+        />
+        {(filterBrand || filterSlot || filterSubType || filterSize || filterClass || !filterAvailable) && (
           <button
             onClick={resetFilters}
             className="hud-label text-hud-muted hover:text-hud-red transition-colors px-2 shrink-0"

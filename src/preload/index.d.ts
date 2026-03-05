@@ -155,6 +155,10 @@ interface UpdaterAPI {
   install: () => void
 }
 
+interface OverlayAPI {
+  onModeChanged: (cb: (active: boolean) => void) => void
+}
+
 interface API {
   window: WindowAPI
   token: TokenAPI
@@ -166,6 +170,7 @@ interface API {
   refineryJobs: RefineryJobsAPI
   wallet: WalletAPI
   imageCache: ImageCacheAPI
+  overlay: OverlayAPI
 }
 
 declare global {

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { Home, Ship, History, FlaskConical, Wallet, Settings, Shield, BarChart2 } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
 import logo from '@renderer/assets/logo.png'
+import { useUIStore } from '../../stores/ui.store'
 
 interface NavItemConfig {
   to: string
@@ -134,8 +135,15 @@ function NavItem({ to, icon: Icon, label, accent, iconActive, bg }: NavItemConfi
 }
 
 export function Sidebar() {
+  const isOverlayMode = useUIStore((s) => s.isOverlayMode)
+
   return (
-    <aside className="relative flex w-14 flex-col bg-hud-panel border-r border-hud-border shrink-0">
+    <aside
+      className={cn(
+        'relative flex w-14 flex-col border-r border-hud-border shrink-0',
+        isOverlayMode ? 'bg-hud-panel/20' : 'bg-hud-panel'
+      )}
+    >
       {/* Logo VERSE */}
       <div className="flex h-12 items-center justify-center border-b border-hud-border shrink-0">
         <img src={logo} alt="Prysma Studio" className="h-10 w-10" />
@@ -158,3 +166,4 @@ export function Sidebar() {
     </aside>
   )
 }
+

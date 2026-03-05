@@ -276,6 +276,8 @@ const tr = {
   'equipment.filter.slot': 'YUVA',
   'equipment.filter.type': 'TÜR',
   'equipment.filter.size': 'BOYUT',
+  'equipment.filter.grade': 'SINIF',
+  'equipment.filter.available': 'MEVCUT',
 
   'equipment.detail.title': 'ÜRÜN DETAYI',
   'equipment.detail.description': 'AÇIKLAMA',
@@ -327,6 +329,11 @@ const tr = {
   'commodities.col.name': 'AD',
   'commodities.col.sell': 'SAT',
   'commodities.col.buy': 'AL',
+  'commodities.col.spread': 'SPREAD',
+  'commodities.filter.all': 'TÜMÜ',
+  'commodities.card.bestSell': 'EN İYİ SATIŞ',
+  'commodities.card.bestBuy': 'EN İYİ ALIM',
+  'commodities.card.margin': 'MARJ',
 
   'commodities.detail.terminals': '{{count}} TERMİNAL',
   'commodities.detail.tab.sell': 'SAT',

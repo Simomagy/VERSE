@@ -282,6 +282,8 @@ const it = {
 	'equipment.filter.slot': 'SLOT',
 	'equipment.filter.type': 'TIPO',
 	'equipment.filter.size': 'TAGLIA',
+	'equipment.filter.grade': 'CLASSE',
+	'equipment.filter.available': 'DISPON.',
 
 	'equipment.detail.title': 'DETTAGLIO OGGETTO',
 	'equipment.detail.description': 'DESCRIZIONE',
@@ -333,6 +335,11 @@ const it = {
 	'commodities.col.name': 'NOME',
 	'commodities.col.sell': 'VENDITA',
 	'commodities.col.buy': 'ACQUISTO',
+	'commodities.col.spread': 'SPREAD',
+	'commodities.filter.all': 'TUTTI',
+	'commodities.card.bestSell': 'MIGLIOR VENDITA',
+	'commodities.card.bestBuy': 'MIGLIOR ACQUISTO',
+	'commodities.card.margin': 'MARGINE',
 
 	'commodities.detail.terminals': '{{count}} TERMINALI',
 	'commodities.detail.tab.sell': 'VENDITA',

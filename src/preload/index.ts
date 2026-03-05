@@ -63,6 +63,12 @@ const appAPI = {
   checkApis: () => ipcRenderer.invoke('app:check-apis') as Promise<{ uex: boolean; wiki: boolean }>
 }
 
+const overlayAPI = {
+  onModeChanged: (cb: (active: boolean) => void) => {
+    ipcRenderer.on('overlay:mode-changed', (_evt, active: boolean) => cb(active))
+  }
+}
+
 const updaterAPI = {
   onUpdateAvailable: (cb: (info: { version: string }) => void) =>
     ipcRenderer.on('updater:update-available', (_evt, info) => cb(info)),
@@ -85,7 +91,8 @@ const api = {
   trades: tradesAPI,
   refineryJobs: refineryJobsAPI,
   wallet: walletAPI,
-  imageCache: imageCacheAPI
+  imageCache: imageCacheAPI,
+  overlay: overlayAPI
 }
 
 if (process.contextIsolated) {
